@@ -45,9 +45,10 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 
 #main{position:absolute;left:96px;top:200px;width:1040px;bottom:160px;display:flex;flex-direction:column}
 .modrow{display:flex;align-items:center;gap:22px}
-.modlogo{height:78px;width:auto;max-width:260px;object-fit:contain;display:block}
+.modlogo{height:96px;width:auto;max-width:320px;object-fit:contain;display:block}
+.has-logo .strip{display:none}
 .strip{font-family:var(--f-brush);font-size:40px;line-height:1;color:var(--pink);transform:rotate(-2deg)}
-.item .gl{width:120px;height:64px;object-fit:contain;object-position:right center;display:block;opacity:.95}
+.item .gl{width:96px;height:58px;object-fit:contain;object-position:right center;display:block;opacity:.95}
 .item .nogl{display:none}
 .camp{margin-top:22px;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .vs{margin-top:20px;font-family:var(--f-display);text-transform:uppercase;line-height:.92;letter-spacing:-.01em}
@@ -240,7 +241,7 @@ function render(){
     const k=next.id+(live?"L":"");
     if(k!==currentKey){currentKey=k;
       $("m-opp").textContent=big(next);$("m-mod").textContent=next.mod;$("m-camp").textContent=next.camp;
-      const im=$("m-logo");im.hidden=true;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.hidden=true};im.src=logoSrc(next.mod);
+      const im=$("m-logo");im.hidden=true;const row=im.parentNode;row.classList.remove("has-logo");im.onload=()=>{im.hidden=false;row.classList.add("has-logo")};im.onerror=()=>{im.hidden=true;row.classList.remove("has-logo")};im.src=logoSrc(next.mod);
       main.classList.toggle("is-br",!next.vs);main.classList.toggle("is-live",live);
       $("m-when").innerHTML=live?`Começou às <b>${hm(next.t)}</b> · previsão de término <b>${hm(next.end)}</b>`:`O jogo começa <b>${fmt(next.t)} · BRT</b>`;
       if(live)setLive(next.live);
