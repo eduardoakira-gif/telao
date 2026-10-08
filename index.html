@@ -47,7 +47,7 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 .modrow{display:flex;align-items:center;gap:22px}
 .modlogo{height:78px;width:auto;max-width:260px;object-fit:contain;display:block}
 .strip{font-family:var(--f-brush);font-size:40px;line-height:1;color:var(--pink);transform:rotate(-2deg)}
-.item .gl{width:52px;height:52px;object-fit:contain;display:block}
+.item .gl{width:120px;height:64px;object-fit:contain;object-position:right center;display:block;opacity:.95}
 .item .nogl{display:none}
 .camp{margin-top:22px;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .vs{margin-top:20px;font-family:var(--f-display);text-transform:uppercase;line-height:.92;letter-spacing:-.01em}
@@ -88,7 +88,7 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 .qhead h2{margin:0;font-family:var(--f-display);font-size:38px;text-transform:uppercase}
 .qhead small{font-weight:700;font-size:17px;letter-spacing:.22em;color:var(--mute)}
 #list{display:flex;flex-direction:column;gap:10px}
-.item{position:relative;padding:12px 24px 12px 22px;display:grid;grid-template-columns:72px auto 1fr;gap:16px;align-items:center;
+.item{position:relative;padding:12px 24px 12px 22px;display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;
   --cut:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
   clip-path:var(--cut);background:var(--grad);isolation:isolate;opacity:0;transform:translateX(40px);animation:in .6s cubic-bezier(.2,.8,.2,1) forwards}
 .item::before{content:"";position:absolute;inset:2px;background:var(--black);clip-path:var(--cut);z-index:-1;transition:background .6s}
@@ -252,7 +252,7 @@ function render(){
   }
   const rest=up.slice(1,6),lk=rest.map(g=>g.id).join("|");
   if(lk!==listKey){listKey=lk;
-    $("list").innerHTML=rest.length?rest.map((g,i)=>`<div class="item" style="animation-delay:${i*.1}s"><div class="idx">${pad(i+2)}.</div><img class="gl" src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"><div style="min-width:0"><div class="meta">${esc(g.mod)}${g.vs&&g.camp?" · "+esc(g.camp):""}</div><div class="m">${esc(g.vs?"vs. "+g.opp:g.opp)}</div><div class="d">${fmt(g.t)}</div></div></div>`).join(""):`<div class="empty">Sem outros jogos agendados.</div>`;
+    $("list").innerHTML=rest.length?rest.map((g,i)=>`<div class="item" style="animation-delay:${i*.1}s"><div class="idx">${pad(i+2)}.</div><div style="min-width:0"><div class="meta">${esc(g.mod)}${g.vs&&g.camp?" · "+esc(g.camp):""}</div><div class="m">${esc(g.vs?"vs. "+g.opp:g.opp)}</div><div class="d">${fmt(g.t)}</div></div><img class="gl" src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"></div>`).join(""):`<div class="empty">Sem outros jogos agendados.</div>`;
     $("q-count").textContent=up.length?`01 / ${pad(up.length)}`:"";
     const items=[...up.slice(0,6).map(g=>`${g.mod} · ${line(g)} · ${fmt(g.t)}`),"Seja Sócio Torcedor Fluxo W7M"];
     const t=items.map(x=>`<span>${esc(x)}</span>`).join("");$("track").innerHTML=t+t;
