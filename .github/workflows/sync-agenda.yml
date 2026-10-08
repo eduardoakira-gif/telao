@@ -1,0 +1,36 @@
+name: Sincronizar agenda do calendário
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-agenda
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install icalendar==5.0.13 recurring-ical-events==2.2.3
+      - name: Atualizar agenda.json
+        env:
+          GCAL_ICS_URL: ${{ secrets.GCAL_ICS_URL }}
+        run: python scripts/sync_calendar.py
+      - name: Commit
+        run: |
+          if [ -n "$(git status --porcelain agenda.json)" ]; then
+            git config user.name "agenda-bot"
+            git config user.email "agenda-bot@users.noreply.github.com"
+            git add agenda.json
+            git commit -m "Atualiza agenda do calendário"
+            git push
+          fi

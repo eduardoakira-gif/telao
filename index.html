@@ -63,11 +63,21 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 .unit .l{display:block;margin-top:12px;font-weight:700;font-size:17px;letter-spacing:.32em;color:var(--mute)}
 .when{margin-top:22px;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase}
 .when b{color:var(--pink);font-weight:800}
-#live{display:none;margin-top:auto;font-family:var(--f-display);font-size:160px;line-height:.9}
-#live i{display:inline-block;width:46px;height:46px;border-radius:50%;background:var(--pink);margin-right:30px;vertical-align:middle;box-shadow:0 0 40px var(--pink);animation:pulse 1.2s ease-in-out infinite}
+#live{display:none;margin-top:auto;gap:48px;align-items:center;max-width:1040px}
+#live>div:first-child{min-width:0}
+.lv-top{font-family:var(--f-display);font-size:76px;line-height:.9;white-space:nowrap}
+.lv-top i{display:inline-block;width:30px;height:30px;border-radius:50%;background:var(--pink);margin-right:26px;vertical-align:middle;box-shadow:0 0 40px var(--pink);animation:pulse 1.2s ease-in-out infinite}
+.lv-btn{display:inline-flex;align-items:center;gap:14px;margin-top:30px;padding:18px 30px;background:var(--grad);color:var(--white);text-decoration:none;font-family:var(--f-display);font-size:30px;letter-spacing:.02em;text-transform:uppercase;clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.lv-btn:focus-visible{outline:3px solid var(--white);outline-offset:4px}
+#lv-url{display:block;margin-top:14px;font-weight:700;font-size:20px;letter-spacing:.08em;color:var(--mute)}
+.lv-qr{flex:none;background:var(--white);padding:12px;text-align:center}
+#lv-qr,#lv-qr img,#lv-qr canvas{display:block;width:176px;height:176px}
+.lv-qr small{display:block;margin-top:8px;font-weight:800;font-size:13px;letter-spacing:.16em;color:var(--black)}
+.nolink .lv-btn,.nolink #lv-url,.nolink .lv-qr{display:none}
 @keyframes pulse{50%{transform:scale(.6);opacity:.4}}
 .is-live .count,.is-live .when{display:none}
-.is-live #live{display:block}
+.is-live #live{display:flex}
+.camp:empty{display:none}
 
 #side{position:absolute;right:96px;top:176px;width:620px;bottom:160px;display:flex;flex-direction:column}
 .seal{align-self:center;width:150px;height:150px;border-radius:50%;position:relative;margin-bottom:20px;flex:none}
@@ -136,7 +146,7 @@ button.pri{background:var(--pink);border-color:var(--pink)}
       <div class="unit"><span class="n" id="c-m">00</span><span class="bar"></span><span class="l">MINUTOS</span></div>
       <div class="unit"><span class="n" id="c-s">00</span><span class="bar"></span><span class="l">SEGUNDOS</span></div>
     </div>
-    <div id="live"><i></i>AO VIVO</div>
+    <div id="live"><div><div class="lv-top"><i></i>AO VIVO AGORA</div><a id="lv-link" class="lv-btn" href="#" target="_blank" rel="noopener">Assistir a live ↗</a><span id="lv-url"></span></div><div class="lv-qr"><div id="lv-qr"></div><small>APONTE A CÂMERA</small></div></div>
     <div class="when" id="m-when">—</div>
   </section>
   <aside id="side">
@@ -149,94 +159,110 @@ button.pri{background:var(--pink);border-color:var(--pink)}
 
 <div id="tools">
   <button id="btn-fs" type="button">Tela cheia</button>
-  <button id="btn-edit" type="button">Editar agenda</button>
 </div>
 
-<div id="editor" hidden>
-  <div class="box">
-    <h3>Agenda do telão</h3>
-    <p>Agenda puxada do calendário COMPETITIVO FLUXO W7M até domingo, 11/10. A contagem aponta sempre para o próximo jogo, e os seguintes entram em "Na sequência". Durante as 3 horas seguintes ao início, o jogo aparece como AO VIVO. Free Fire, Delta Force e EA FC aparecem sem "vs.". A agenda editada fica salva neste navegador. As logos vêm da pasta logos/ do repositório, com o nome da modalidade (ex.: logos/rainbow-six.png).</p>
-    <div class="row hdrs"><span>Modalidade</span><span>Campeonato / fase</span><span>Adversário ou etapa</span><span>Data e hora (Brasília)</span><span></span></div>
-    <div id="rows"></div>
-    <div class="actions">
-      <button id="btn-add" type="button">+ Adicionar jogo</button>
-      <button id="btn-save" class="pri" type="button">Salvar</button>
-      <button id="btn-reset" type="button">Restaurar agenda original</button>
-      <button id="btn-close" type="button">Fechar</button>
-    </div>
-  </div>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-// Agenda — fonte: calendário COMPETITIVO FLUXO W7M
-const ORIGINAL=[
-  {mod:"Rainbow Six",camp:"South America League 2026 · Stage 2 · Playoffs",opp:"FaZe / BD",when:"2026-10-09T18:00"},
-  {mod:"Delta Force",camp:"Pro League",opp:"Pro League · W4",when:"2026-10-09T21:00"},
-  {mod:"EA FC",camp:"FC Pro Open",opp:"Qualify · Dia 1",when:"2026-10-10T12:00"},
-  {mod:"Free Fire",camp:"FFWS Brasil 2026",opp:"Grande Final · Dia 1",when:"2026-10-10T13:00"},
-  {mod:"EA FC",camp:"FC Pro Open",opp:"Qualify · Dia 2",when:"2026-10-11T12:00"},
-  {mod:"Free Fire",camp:"FFWS Brasil 2026",opp:"Grande Final · Dia 2",when:"2026-10-11T13:00"}
+// ===== Agenda: sincronizada do calendário COMPETITIVO FLUXO W7M via agenda.json (GitHub Action) =====
+// Reserva embutida, usada só se agenda.json não carregar.
+const EMBED=[{"id": "4604n4daitcf1eohms4srj9u78", "title": "[R6] SAL vs Faze/BD", "start": "2026-10-09T18:00:00-03:00", "end": "2026-10-09T20:30:00-03:00", "live": ""}, {"id": "1bbuo74se6aet1iggb20oor9ip", "title": "[DELTA FORCE] #2 Pro League W4", "start": "2026-10-09T21:00:00-03:00", "end": "2026-10-09T23:45:00-03:00", "live": ""}, {"id": "3dom9jrmeq24h4q2sb478boibm", "title": "[EA FC] Qualify FC Pro Open", "start": "2026-10-10T12:00:00-03:00", "end": "2026-10-10T18:00:00-03:00", "live": ""}, {"id": "5p2n96u36a8fm1g94tjbf4onm3", "title": "FFWS BRASIL FINAL", "start": "2026-10-10T13:00:00-03:00", "end": "2026-10-10T16:00:00-03:00", "live": ""}, {"id": "4ljs0m2n6oot4sqipjjd6tof74", "title": "[EA FC] Qualify FC Pro Open", "start": "2026-10-11T12:00:00-03:00", "end": "2026-10-11T18:00:00-03:00", "live": ""}, {"id": "3i546e52vujps6lfvj0tln8ulu", "title": "FFWS BRASIL FINAL", "start": "2026-10-11T13:00:00-03:00", "end": "2026-10-11T16:00:00-03:00", "live": ""}, {"id": "corm4pb36timcb9n75j3eb9k6hi6cbb16cq32b9pclij2cj6clhm8p36cg", "title": "R6 Challenger League vs Kds do pagode", "start": "2026-10-14T19:00:00-03:00", "end": "2026-10-14T20:00:00-03:00", "live": ""}, {"id": "1c33du6nahdoq3a91cnspl8j24", "title": "[DELTA FORCE] #2 Pro League Survivor Stage#1", "start": "2026-10-15T21:00:00-03:00", "end": "2026-10-15T23:45:00-03:00", "live": ""}, {"id": "6m7q2h2jseqltc0s8g4pbd2ouc", "title": "[DELTA FORCE] #2 Pro League Survivor Stage#2", "start": "2026-10-16T21:00:00-03:00", "end": "2026-10-16T23:45:00-03:00", "live": ""}, {"id": "577tffujlpiqvf3638t41mgeps", "title": "[DELTA FORCE] #2 Pro League Survivor Stage#3", "start": "2026-10-17T21:00:00-03:00", "end": "2026-10-17T23:45:00-03:00", "live": ""}, {"id": "0tvtmbc12jb14dgq5sdf5b22o9", "title": "[DELTA FORCE] #2 Pro League Finals", "start": "2026-10-18T21:00:00-03:00", "end": "2026-10-18T23:45:00-03:00", "live": ""}];
+// Link padrão da live por modalidade (pode ser sobrescrito por live.json ou por um link na descrição do evento)
+let LIVE={"Rainbow Six":"https://www.twitch.tv/rainbow6br"};
+let events=EMBED;
+
+const MODS=[
+  [/^(r6|rainbow ?six)\b/i,"Rainbow Six",1],
+  [/^(ff|free ?fire)\b/i,"Free Fire",1],
+  [/^(ffws|lbff)\b/i,"Free Fire",0],
+  [/^(ea ?fc)\b/i,"EA FC",1],
+  [/^(delta ?force|df)\b/i,"Delta Force",1],
+  [/^(cs2?|counter-?strike ?2?)\b/i,"Counter-Strike 2",1],
+  [/^(val|valorant)\b/i,"Valorant",1],
+  [/^(lol|league of legends)\b/i,"League of Legends",1],
+  [/^(cblol)\b/i,"League of Legends",0],
+  [/^(fortnite)\b/i,"Fortnite",1]
 ];
-const SOLO=/free ?fire|fortnite|pubg|delta|ea ?fc/i;
-const KEY="telao-fluxo-agenda-v4";
-const LIVE_MS=3*3600e3;
-let games=load();
-function load(){try{const s=localStorage.getItem(KEY);if(s){const a=JSON.parse(s);if(Array.isArray(a)&&a.length)return a}}catch(e){}return ORIGINAL.map(g=>({...g}))}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(games))}catch(e){}}
+function parse(title){
+  let t=String(title||"").trim(),tag=null,rest=t;
+  const m=t.match(/^\[([^\]]+)\]\s*(.*)$/);if(m){tag=m[1].trim();rest=m[2].trim()}
+  let mod=null;
+  for(const [re,name,strip] of MODS){
+    if(tag&&re.test(tag)){mod=name;break}
+    if(!tag&&re.test(rest)){mod=name;if(strip)rest=rest.replace(re,"").trim();break}
+  }
+  if(!mod)mod=tag?tag.replace(/\b\w/g,c=>c.toUpperCase()):"Fluxo W7M";
+  rest=rest.replace(/^#\d+\s*/,"").replace(/\s+/g," ").trim();
+  const parts=rest.split(/\s+vs\.?\s+/i);
+  if(parts.length>1)return{mod,camp:parts[0].trim(),opp:parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / "),vs:true};
+  return{mod,camp:"",opp:rest||mod,vs:false};
+}
+function build(){
+  return events.map(e=>{const p=parse(e.title);const s=new Date(e.start);const en=e.end?new Date(e.end):new Date(s.getTime()+3*3600e3);
+    return{...p,id:e.id||e.start+e.title,t:s,end:en,live:e.live||LIVE[p.mod]||""}}).filter(g=>!isNaN(g.t)).sort((a,b)=>a.t-b.t);
+}
+async function sync(){
+  try{const r=await fetch("live.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&typeof j==="object")LIVE={...LIVE,...j}}}catch(e){}
+  try{const r=await fetch("agenda.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j.events)&&j.events.length)events=j.events}}catch(e){}
+  games=build();currentKey=listKey="";
+}
 
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
 const DIAS=["DOM","SEG","TER","QUA","QUI","SEX","SÁB"],MESES=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
-const fmt=d=>`${DIAS[d.getDay()]} · ${pad(d.getDate())} DE ${MESES[d.getMonth()]} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const hm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const fmt=d=>`${DIAS[d.getDay()]} · ${pad(d.getDate())} DE ${MESES[d.getMonth()]} · ${hm(d)}`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const slug=m=>m.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-");
+const slug=m=>m.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-");
 const logoSrc=m=>`logos/${slug(m)}.png`;
-const line=g=>SOLO.test(g.mod)?`Fluxo W7M · ${g.opp}`:`Fluxo W7M vs. ${g.opp}`;
+const big=g=>g.vs?g.opp:g.opp;
+const line=g=>g.vs?`Fluxo W7M vs. ${g.opp}`:`Fluxo W7M · ${g.opp}`;
 
 function fit(){const f=$("fit");const s=Math.min(f.clientWidth/1920,f.clientHeight/1080);$("stage").style.transform=`translate(-50%,-50%) scale(${s})`}
 addEventListener("resize",fit);addEventListener("fullscreenchange",fit);fit();
 function fitOpp(){const el=$("m-opp");el.style.transform="none";const w=el.offsetWidth,max=1020;el.style.transform=w>max?`scale(${max/w})`:"none"}
 
-let currentKey="",listKey="";
-const upcoming=now=>games.map(g=>({...g,t:new Date(g.when)})).filter(g=>!isNaN(g.t)&&g.t.getTime()+LIVE_MS>now).sort((a,b)=>a.t-b.t);
+let games=build(),currentKey="",listKey="",qrUrl="";
+function setLive(url){
+  const main=$("main");main.classList.toggle("nolink",!url);
+  if(!url||url===qrUrl)return;qrUrl=url;
+  $("lv-link").href=url;$("lv-url").textContent=url.replace(/^https?:\/\/(www\.)?/,"");
+  const box=$("lv-qr");box.innerHTML="";
+  try{new QRCode(box,{text:url,width:176,height:176,colorDark:"#060507",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}catch(e){box.parentNode.style.display="none"}
+}
 
 function render(){
-  const now=Date.now();
-  const nd=new Date(now);$("clock").textContent=nd.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});$("today").textContent=`${DIAS[nd.getDay()]} · ${pad(nd.getDate())} DE ${MESES[nd.getMonth()]} · ${nd.getFullYear()}`;
-  const up=upcoming(now),next=up[0],main=$("main");
-  if(!next){currentKey="";$("m-opp").textContent="Em breve";$("m-mod").textContent="Agenda";$("m-camp").textContent="Novos jogos em breve";$("m-when").textContent="";["d","h","m","s"].forEach(k=>$("c-"+k).textContent="00");main.classList.remove("is-live");main.classList.add("is-br")}
+  const now=Date.now(),nd=new Date(now);
+  $("clock").textContent=hm(nd);$("today").textContent=`${DIAS[nd.getDay()]} · ${pad(nd.getDate())} DE ${MESES[nd.getMonth()]} · ${nd.getFullYear()}`;
+  const up=games.filter(g=>g.end.getTime()>now),next=up[0],main=$("main");
+  if(!next){currentKey="";$("m-opp").textContent="Em breve";$("m-mod").textContent="Agenda";$("m-camp").textContent="";$("m-when").textContent="Novos jogos em breve";["d","h","m","s"].forEach(k=>$("c-"+k).textContent="00");main.classList.remove("is-live");main.classList.add("is-br")}
   else{
-    const k=next.when+next.opp;
-    if(k!==currentKey){currentKey=k;$("m-opp").textContent=next.opp;$("m-mod").textContent=next.mod;{const im=$("m-logo");im.hidden=true;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.hidden=true};im.src=logoSrc(next.mod);}$("m-camp").textContent=next.camp;
-      main.classList.toggle("is-br",SOLO.test(next.mod));$("m-when").innerHTML=`O jogo começa <b>${fmt(next.t)} · BRT</b>`;fitOpp()}
-    let diff=next.t-now;main.classList.toggle("is-live",diff<=0);diff=Math.max(0,diff);
-    const s=Math.floor(diff/1000);
+    const live=next.t.getTime()<=now;
+    const k=next.id+(live?"L":"");
+    if(k!==currentKey){currentKey=k;
+      $("m-opp").textContent=big(next);$("m-mod").textContent=next.mod;$("m-camp").textContent=next.camp;
+      const im=$("m-logo");im.hidden=true;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.hidden=true};im.src=logoSrc(next.mod);
+      main.classList.toggle("is-br",!next.vs);main.classList.toggle("is-live",live);
+      $("m-when").innerHTML=live?`Começou às <b>${hm(next.t)}</b> · previsão de término <b>${hm(next.end)}</b>`:`O jogo começa <b>${fmt(next.t)} · BRT</b>`;
+      if(live)setLive(next.live);
+      fitOpp();
+    }
+    const s=Math.floor(Math.max(0,next.t-now)/1000);
     $("c-d").textContent=pad(Math.floor(s/86400));$("c-h").textContent=pad(Math.floor(s%86400/3600));
     $("c-m").textContent=pad(Math.floor(s%3600/60));$("c-s").textContent=pad(s%60);
   }
-  const rest=up.slice(1,6),lk=rest.map(g=>g.when+g.opp).join("|");
+  const rest=up.slice(1,6),lk=rest.map(g=>g.id).join("|");
   if(lk!==listKey){listKey=lk;
-    $("list").innerHTML=rest.length?rest.map((g,i)=>`<div class="item" style="animation-delay:${i*.1}s"><div class="idx">${pad(i+2)}.</div><img class="gl" src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"><div style="min-width:0"><div class="meta">${esc(g.mod)} · ${esc(g.camp)}</div><div class="m">${esc(SOLO.test(g.mod)?g.opp:"vs. "+g.opp)}</div><div class="d">${fmt(g.t)}</div></div></div>`).join(""):`<div class="empty">Sem outros jogos agendados.</div>`;
+    $("list").innerHTML=rest.length?rest.map((g,i)=>`<div class="item" style="animation-delay:${i*.1}s"><div class="idx">${pad(i+2)}.</div><img class="gl" src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"><div style="min-width:0"><div class="meta">${esc(g.mod)}${g.vs&&g.camp?" · "+esc(g.camp):""}</div><div class="m">${esc(g.vs?"vs. "+g.opp:g.opp)}</div><div class="d">${fmt(g.t)}</div></div></div>`).join(""):`<div class="empty">Sem outros jogos agendados.</div>`;
     $("q-count").textContent=up.length?`01 / ${pad(up.length)}`:"";
-    const items=[...up.map(g=>`${g.mod} · ${line(g)} · ${fmt(g.t)}`),"Seja Sócio Torcedor Fluxo W7M"];
+    const items=[...up.slice(0,6).map(g=>`${g.mod} · ${line(g)} · ${fmt(g.t)}`),"Seja Sócio Torcedor Fluxo W7M"];
     const t=items.map(x=>`<span>${esc(x)}</span>`).join("");$("track").innerHTML=t+t;
   }
 }
 let hl=0;setInterval(()=>{const it=[...document.querySelectorAll(".item")];if(!it.length)return;it.forEach(e=>e.classList.remove("hl"));it[hl%it.length].classList.add("hl");hl++},3500);
 render();setInterval(render,250);document.fonts&&document.fonts.ready.then(fitOpp);
+sync();setInterval(sync,5*60e3);
 
 $("btn-fs").onclick=async()=>{try{await document.documentElement.requestFullscreen()}catch(e){}try{await navigator.wakeLock?.request("screen")}catch(e){}};
-function drawRows(){$("rows").innerHTML=games.map((g,i)=>`<div class="row" data-i="${i}">
-  <input id="mod-${i}" aria-label="Modalidade" value="${esc(g.mod)}"><input id="camp-${i}" aria-label="Campeonato" value="${esc(g.camp)}">
-  <input id="opp-${i}" aria-label="Adversário ou etapa" value="${esc(g.opp)}"><input id="when-${i}" aria-label="Data e hora" type="datetime-local" value="${esc(g.when)}">
-  <button type="button" data-del="${i}" aria-label="Remover jogo">✕</button></div>`).join("")}
-function readRows(){games=[...document.querySelectorAll("#rows .row")].map(r=>{const i=r.dataset.i,q=s=>r.querySelector(s).value.trim();return{mod:q(`#mod-${i}`),camp:q(`#camp-${i}`),opp:q(`#opp-${i}`)||"A definir",when:q(`#when-${i}`)}}).filter(g=>g.when)}
-$("btn-edit").onclick=()=>{drawRows();$("editor").hidden=false};
-$("btn-close").onclick=()=>{$("editor").hidden=true};
-$("btn-add").onclick=()=>{readRows();games.push({mod:"",camp:"",opp:"",when:"2026-10-12T18:00"});drawRows()};
-$("rows").onclick=e=>{const d=e.target.dataset.del;if(d!==undefined){readRows();games.splice(+d,1);drawRows()}};
-$("btn-save").onclick=()=>{readRows();persist();currentKey=listKey="";render();$("editor").hidden=true};
-$("btn-reset").onclick=()=>{games=ORIGINAL.map(g=>({...g}));try{localStorage.removeItem(KEY)}catch(e){}drawRows();currentKey=listKey="";render()};
 </script>
 
 </body>
