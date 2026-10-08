@@ -50,6 +50,7 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 .strip{font-family:var(--f-brush);font-size:40px;line-height:1;color:var(--pink);transform:rotate(-2deg)}
 .item .gl{width:96px;height:58px;object-fit:contain;object-position:right center;display:block;opacity:.95}
 .item .nogl{display:none}
+.item .gl-ea-fc{height:46px;object-position:center center}
 .camp{margin-top:22px;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .vs{margin-top:20px;font-family:var(--f-display);text-transform:uppercase;line-height:.92;letter-spacing:-.01em}
 .vs .us{display:block;font-size:150px}
@@ -253,7 +254,7 @@ function render(){
   }
   const rest=up.slice(1,6),lk=rest.map(g=>g.id).join("|");
   if(lk!==listKey){listKey=lk;
-    $("list").innerHTML=rest.length?rest.map((g,i)=>`<div class="item" style="animation-delay:${i*.1}s"><div class="idx">${pad(i+2)}.</div><div style="min-width:0"><div class="meta">${esc(g.mod)}${g.vs&&g.camp?" · "+esc(g.camp):""}</div><div class="m">${esc(g.vs?"vs. "+g.opp:g.opp)}</div><div class="d">${fmt(g.t)}</div></div><img class="gl" src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"></div>`).join(""):`<div class="empty">Sem outros jogos agendados.</div>`;
+    $("list").innerHTML=rest.length?rest.map((g,i)=>`<div class="item" style="animation-delay:${i*.1}s"><div class="idx">${pad(i+2)}.</div><div style="min-width:0"><div class="meta">${esc(g.mod)}${g.vs&&g.camp?" · "+esc(g.camp):""}</div><div class="m">${esc(g.vs?"vs. "+g.opp:g.opp)}</div><div class="d">${fmt(g.t)}</div></div><img class="gl gl-${slug(g.mod)}" src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"></div>`).join(""):`<div class="empty">Sem outros jogos agendados.</div>`;
     $("q-count").textContent=up.length?`01 / ${pad(up.length)}`:"";
     const items=[...up.slice(0,6).map(g=>`${g.mod} · ${line(g)} · ${fmt(g.t)}`),"Seja Sócio Torcedor Fluxo W7M"];
     const t=items.map(x=>`<span>${esc(x)}</span>`).join("");$("track").innerHTML=t+t;
