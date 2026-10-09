@@ -171,6 +171,8 @@ const EMBED=[{"id": "4604n4daitcf1eohms4srj9u78", "title": "[R6] SAL vs Faze/BD"
 // Link padrão da live por modalidade (pode ser sobrescrito por live.json ou por um link na descrição do evento)
 let LIVE={"Rainbow Six":"https://www.twitch.tv/rainbow6br"};
 let events=EMBED;
+// Ajustes manuais por evento (overrides.json): chave = ID do evento no calendário
+let OVR={};
 
 const MODS=[
   [/^(r6|rainbow ?six)\b/i,"Rainbow Six",1],
@@ -199,10 +201,11 @@ function parse(title){
   return{mod,camp:"",opp:rest||mod,vs:false};
 }
 function build(){
-  return events.map(e=>{const p=parse(e.title);const s=new Date(e.start);const en=e.end?new Date(e.end):new Date(s.getTime()+3*3600e3);
+  return events.map(e0=>{const k=Object.keys(OVR).find(k=>String(e0.id||"").startsWith(k));const e=k?{...e0,...OVR[k]}:e0;const p=parse(e.title);const s=new Date(e.start);const en=e.end?new Date(e.end):new Date(s.getTime()+3*3600e3);
     return{...p,id:e.id||e.start+e.title,t:s,end:en,live:e.live||LIVE[p.mod]||""}}).filter(g=>!isNaN(g.t)).sort((a,b)=>a.t-b.t);
 }
 async function sync(){
+  try{const r=await fetch("overrides.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&typeof j==="object")OVR=j}}catch(e){}
   try{const r=await fetch("live.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&typeof j==="object")LIVE={...LIVE,...j}}}catch(e){}
   try{const r=await fetch("agenda.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j.events)&&j.events.length)events=j.events}}catch(e){}
   games=build();currentKey=listKey="";
