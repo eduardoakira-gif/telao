@@ -266,6 +266,10 @@ function render(){
 let hl=0;setInterval(()=>{const it=[...document.querySelectorAll(".item")];if(!it.length)return;it.forEach(e=>e.classList.remove("hl"));it[hl%it.length].classList.add("hl");hl++},3500);
 render();setInterval(render,250);document.fonts&&document.fonts.ready.then(fitOpp);
 sync();setInterval(sync,5*60e3);
+// Recarrega sozinho quando uma nova versão do painel é publicada
+let pageSig=null;
+async function checkVersion(){try{const r=await fetch(location.pathname+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)return;const t=await r.text();const sig=t.length+":"+t.slice(-200);if(pageSig===null)pageSig=sig;else if(sig!==pageSig)location.reload()}catch(e){}}
+checkVersion();setInterval(checkVersion,5*60e3);
 
 $("btn-fs").onclick=async()=>{try{await document.documentElement.requestFullscreen()}catch(e){}try{await navigator.wakeLock?.request("screen")}catch(e){}};
 </script>
