@@ -1,6 +1,6 @@
 {
   "source": "COMPETITIVO FLUXO W7M",
-  "updated": "2026-10-12T20:30:06-03:00",
+  "updated": "2026-10-13T19:43:10-03:00",
   "events": [
     {
       "id": "corm4pb36timcb9n75j3eb9k6hi6cbb16cq32b9pclij2cj6clhm8p36cg@google.com-2026-10-14T19:00:00-03:00",
@@ -35,6 +35,41 @@
       "title": "[DELTA FORCE] #2 Pro League Finals",
       "start": "2026-10-18T21:00:00-03:00",
       "end": "2026-10-18T23:45:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "5hvdrq9o86ikhpf4h89k1lp67i@google.com-2026-10-19T19:00:00-03:00",
+      "title": "[KL] vs Furia",
+      "start": "2026-10-19T19:00:00-03:00",
+      "end": "2026-10-19T20:00:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "4temvtq5dnm7m3n8jbqhos6bnq@google.com-2026-10-26T20:00:00-03:00",
+      "title": "[KL] vs Loud",
+      "start": "2026-10-26T20:00:00-03:00",
+      "end": "2026-10-26T21:00:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "6dq0fl5lspeiqbnka5v9hn0tjm@google.com-2026-11-02T18:00:00-03:00",
+      "title": "[KL] vs FunkBol",
+      "start": "2026-11-02T18:00:00-03:00",
+      "end": "2026-11-02T19:00:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "08mcgetoi0dr521ujm52hjc30n@google.com-2026-11-09T19:00:00-03:00",
+      "title": "[KL] vs Capim FC",
+      "start": "2026-11-09T19:00:00-03:00",
+      "end": "2026-11-09T20:00:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "1l0i20nf13jk9dh3l579b3khpe@google.com-2026-11-16T18:00:00-03:00",
+      "title": "[KL] vs Dibrados",
+      "start": "2026-11-16T18:00:00-03:00",
+      "end": "2026-11-16T19:00:00-03:00",
       "live": ""
     },
     {
