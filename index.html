@@ -119,9 +119,12 @@ footer::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;back
 footer .lbl{flex:none;height:100%;display:grid;place-items:center;padding:0 40px 0 96px;font-family:var(--f-brush);font-size:36px;background:var(--black);z-index:1;position:relative}
 .tk{flex:1;min-width:0;height:100%;overflow:hidden;display:flex;align-items:center}
 .track{display:flex;white-space:nowrap;animation:tick 50s linear infinite}
-.spons{flex:none;height:100%;display:flex;align-items:center;gap:22px;padding:0 96px 0 32px;background:var(--black);position:relative;z-index:1;border-left:2px solid var(--line)}
-.spons small{font-weight:700;font-size:13px;letter-spacing:.24em;color:var(--mute);writing-mode:vertical-rl;transform:rotate(180deg)}
-.spons img{height:54px;width:auto;display:block}
+.spons{flex:none;width:620px;height:100%;position:relative;background:var(--black);z-index:1;border-left:2px solid var(--line);margin-right:96px}
+.sg{position:absolute;inset:0 0 0 40px;display:flex;align-items:center;justify-content:flex-end;gap:36px;opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
+.sg.on{opacity:1;transform:none}
+.sg img{height:34px;width:auto;display:block}
+.sg .sp-realme{height:20px}
+.sg .sp-rehidrat,.sg .sp-asics,.sg .sp-segue-o-fx{height:42px}
 .track span{font-weight:700;font-size:22px;letter-spacing:.16em;text-transform:uppercase;padding:0 36px}
 .track span::after{content:"";display:inline-block;width:10px;height:10px;background:var(--pink);transform:rotate(45deg);margin-left:72px;vertical-align:middle}
 @keyframes tick{to{transform:translateX(-50%)}}
@@ -173,7 +176,7 @@ button.pri{background:var(--pink);border-color:var(--pink)}
     <div class="qhead"><h2>Na sequência</h2><small id="q-count"></small></div>
     <div id="list"></div>
   </aside>
-  <footer><div class="lbl">#SegueOFX</div><div class="tk"><div class="track" id="track"></div></div><div class="spons"><img src="logos/patrocinadores.png" alt="Patrocinadores: Banco do Brasil, BB Consórcios, Rehidrat, Serpro, ASICS, Fluxo On, Redragon, realme"></div></footer>
+  <footer><div class="lbl">#SegueOFX</div><div class="tk"><div class="track" id="track"></div></div><div class="spons"><div class="sg on"><img class="sp-banco-do-brasil" src="logos/patrocinadores/01-banco-do-brasil.png" alt="Banco do Brasil"><img class="sp-bb-consorcios" src="logos/patrocinadores/02-bb-consorcios.png" alt="BB Consórcios"></div><div class="sg"><img class="sp-rehidrat" src="logos/patrocinadores/03-rehidrat.png" alt="Rehidrat"><img class="sp-serpro" src="logos/patrocinadores/04-serpro.png" alt="Serpro"><img class="sp-segue-o-fx" src="logos/patrocinadores/05-segue-o-fx.png" alt="Segue o FX"><img class="sp-asics" src="logos/patrocinadores/06-asics.png" alt="ASICS"></div><div class="sg"><img class="sp-fluxo-on" src="logos/patrocinadores/07-fluxo-on.png" alt="Fluxo On"><img class="sp-redragon" src="logos/patrocinadores/08-redragon.png" alt="Redragon"><img class="sp-realme" src="logos/patrocinadores/09-realme.png" alt="realme"></div></div></footer>
 </div></div>
 
 <div id="tools">
@@ -292,6 +295,7 @@ function render(){
     const t=items.map(x=>`<span>${esc(x)}</span>`).join("");$("track").innerHTML=t+t;
   }
 }
+let sgI=0;setInterval(()=>{const g=document.querySelectorAll(".sg");if(!g.length)return;g[sgI%g.length].classList.remove("on");sgI++;g[sgI%g.length].classList.add("on")},6000);
 let hl=0;setInterval(()=>{const it=[...document.querySelectorAll(".item")];if(!it.length)return;it.forEach(e=>e.classList.remove("hl"));it[hl%it.length].classList.add("hl");hl++},3500);
 render();setInterval(render,250);document.fonts&&document.fonts.ready.then(fitOpp);
 sync();setInterval(sync,5*60e3);
