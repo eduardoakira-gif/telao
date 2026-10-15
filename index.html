@@ -79,6 +79,18 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 @keyframes pulse{50%{transform:scale(.6);opacity:.4}}
 .is-live .count,.is-live .when{display:none}
 .is-live #live{display:flex}
+/* modo transmissão: player da live embutido */
+[hidden]{display:none!important}
+#embed{display:none}
+.has-embed .vs,.has-embed .camp,.has-embed #live{display:none!important}
+.has-embed .modlogo{height:64px}
+.has-embed #embed{display:flex;flex-direction:column;gap:18px;margin-top:18px}
+.em-top{display:flex;align-items:baseline;gap:22px;white-space:nowrap;overflow:hidden}
+.em-top b{font-family:var(--f-display);font-size:54px;line-height:1}
+.em-top b i{display:inline-block;width:24px;height:24px;border-radius:50%;background:var(--pink);margin-right:18px;vertical-align:middle;box-shadow:0 0 30px var(--pink);animation:pulse 1.2s ease-in-out infinite}
+.em-top span{font-family:var(--f-display);font-size:40px;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;overflow:hidden;text-overflow:ellipsis}
+.em-frame{position:relative;width:960px;height:540px;background:#000;padding:3px;background:var(--grad);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px)}
+.em-frame iframe{display:block;width:100%;height:100%;border:0;background:#000}
 .camp:empty{display:none}
 
 #side{position:absolute;right:96px;top:176px;width:620px;bottom:160px;display:flex;flex-direction:column}
@@ -148,6 +160,7 @@ button.pri{background:var(--pink);border-color:var(--pink)}
       <div class="unit"><span class="n" id="c-m">00</span><span class="bar"></span><span class="l">MINUTOS</span></div>
       <div class="unit"><span class="n" id="c-s">00</span><span class="bar"></span><span class="l">SEGUNDOS</span></div>
     </div>
+    <div id="embed"><div class="em-top"><b><i></i>AO VIVO AGORA</b><span id="em-opp"></span></div><div class="em-frame"><iframe id="em-player" title="Transmissão ao vivo" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe></div></div>
     <div id="live"><div><div class="lv-top"><i></i>AO VIVO AGORA</div><a id="lv-link" class="lv-btn" href="#" target="_blank" rel="noopener">Assistir a live ↗</a><span id="lv-url"></span></div><div class="lv-qr"><div id="lv-qr"></div><small>APONTE A CÂMERA</small></div></div>
     <div class="when" id="m-when">—</div>
   </section>
@@ -184,6 +197,7 @@ const MODS=[
   [/^(val|valorant)\b/i,"Valorant",1],
   [/^(lol|league of legends)\b/i,"League of Legends",1],
   [/^(cblol)\b/i,"League of Legends",0],
+  [/^(kl|kings ?league)\b/i,"Kings League",1],
   [/^(fortnite)\b/i,"Fortnite",1]
 ];
 function parse(title){
@@ -196,7 +210,7 @@ function parse(title){
   }
   if(!mod)mod=tag?tag.replace(/\b\w/g,c=>c.toUpperCase()):"Fluxo W7M";
   rest=rest.replace(/^#\d+\s*/,"").replace(/\s+/g," ").trim();
-  const parts=rest.split(/\s+vs\.?\s+/i);
+  const parts=rest.split(/(?:^|\s+)vs\.?\s+/i);
   if(parts.length>1)return{mod,camp:parts[0].trim(),opp:parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / "),vs:true};
   return{mod,camp:"",opp:rest||mod,vs:false};
 }
@@ -226,7 +240,17 @@ function fit(){const f=$("fit");const s=Math.min(f.clientWidth/1920,f.clientHeig
 addEventListener("resize",fit);addEventListener("fullscreenchange",fit);fit();
 function fitOpp(){const el=$("m-opp");el.style.transform="none";const w=el.offsetWidth,max=1020;el.style.transform=w>max?`scale(${max/w})`:"none"}
 
-let games=build(),currentKey="",listKey="",qrUrl="";
+let games=build(),currentKey="",listKey="",qrUrl="",embedSrc="";
+// Converte link de live (Twitch ou YouTube) em player embutido
+function embedUrl(u){try{const x=new URL(u),h=x.hostname.replace(/^(www|m)\./,"");
+  if(h==="twitch.tv"){const ch=x.pathname.split("/")[1];if(ch)return`https://player.twitch.tv/?channel=${ch}&parent=${location.hostname}&muted=true&autoplay=true`}
+  if(h==="youtube.com"){let id=x.searchParams.get("v");if(!id){const m=x.pathname.match(/^\/(live|embed)\/([\w-]{11})/);if(m)id=m[2]}
+    if(id)return`https://www.youtube.com/embed/${id}?autoplay=1&mute=1`;const c=x.pathname.match(/^\/channel\/(UC[\w-]+)/);if(c)return`https://www.youtube.com/embed/live_stream?channel=${c[1]}&autoplay=1&mute=1`}
+  if(h==="youtu.be"){const id=x.pathname.slice(1);if(id)return`https://www.youtube.com/embed/${id}?autoplay=1&mute=1`}
+}catch(e){}return""}
+function setEmbed(g){const src=g&&g.live?embedUrl(g.live):"";const main=$("main");main.classList.toggle("has-embed",!!src);
+  if(src){$("em-opp").textContent=g.vs?"vs. "+g.opp:g.opp;if(src!==embedSrc){embedSrc=src;$("em-player").src=src}}
+  else if(embedSrc){embedSrc="";$("em-player").src="about:blank"}}
 function setLive(url){
   const main=$("main");main.classList.toggle("nolink",!url);
   if(!url||url===qrUrl)return;qrUrl=url;
@@ -239,7 +263,7 @@ function render(){
   const now=Date.now(),nd=new Date(now);
   $("clock").textContent=hm(nd);$("today").textContent=`${DIAS[nd.getDay()]} · ${pad(nd.getDate())} DE ${MESES[nd.getMonth()]} · ${nd.getFullYear()}`;
   const up=games.filter(g=>g.end.getTime()>now),next=up[0],main=$("main");
-  if(!next){currentKey="";$("m-opp").textContent="Em breve";$("m-mod").textContent="Agenda";$("m-camp").textContent="";$("m-when").textContent="Novos jogos em breve";["d","h","m","s"].forEach(k=>$("c-"+k).textContent="00");main.classList.remove("is-live");main.classList.add("is-br")}
+  if(!next){currentKey="";$("m-opp").textContent="Em breve";$("m-mod").textContent="Agenda";$("m-camp").textContent="";$("m-when").textContent="Novos jogos em breve";["d","h","m","s"].forEach(k=>$("c-"+k).textContent="00");main.classList.remove("is-live");main.classList.add("is-br");setEmbed(null)}
   else{
     const live=next.t.getTime()<=now;
     const k=next.id+(live?"L":"");
@@ -249,6 +273,7 @@ function render(){
       main.classList.toggle("is-br",!next.vs);main.classList.toggle("is-live",live);
       $("m-when").innerHTML=live?`Começou às <b>${hm(next.t)}</b> · previsão de término <b>${hm(next.end)}</b>`:`O jogo começa <b>${fmt(next.t)} · BRT</b>`;
       if(live)setLive(next.live);
+      setEmbed(live?next:null);
       fitOpp();
     }
     const s=Math.floor(Math.max(0,next.t-now)/1000);
