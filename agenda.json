@@ -1,6 +1,6 @@
 {
   "source": "COMPETITIVO FLUXO W7M",
-  "updated": "2026-11-08T11:39:01-03:00",
+  "updated": "2026-11-08T16:06:52-03:00",
   "events": [
     {
       "id": "524gj9ubjud32aelqeh73fq9ns@google.com-2026-11-08T00:30:00-03:00",
@@ -10,10 +10,24 @@
       "live": ""
     },
     {
+      "id": "0phi8odvma2s7541dqet3elppl@google.com-2026-11-08T03:30:00-03:00",
+      "title": "[R6] Osaka Major vs LOS",
+      "start": "2026-11-08T03:30:00-03:00",
+      "end": "2026-11-08T04:30:00-03:00",
+      "live": ""
+    },
+    {
       "id": "75v618sgi2p8frb57o5nqtfa98@google.com-2026-11-08T07:00:00-03:00",
       "title": "FFWS - day 3 BxC",
       "start": "2026-11-08T07:00:00-03:00",
       "end": "2026-11-08T11:00:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "6l0h3t7ou444pav50n95070rkc@google.com-2026-11-09T02:30:00-03:00",
+      "title": "[R6] Osaka Major vs Edward Gaming",
+      "start": "2026-11-09T02:30:00-03:00",
+      "end": "2026-11-09T05:00:00-03:00",
       "live": ""
     },
     {
