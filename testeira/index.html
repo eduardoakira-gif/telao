@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testeira Fluxo W7M</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@600;700;800&display=swap">
+<style>
+/* Layout: faixa 2340x208 escalada para a janela; selo à esquerda, cenas rotativas no centro, relógio à direita */
+:root{
+  --black:#060507;--shard:#111014;--line:#2a2530;
+  --pink:#ff1f55;--violet:#a42cff;--white:#fff;--mute:#8f8a96;
+  --grad:linear-gradient(90deg,var(--pink) 0%,#ff2a8a 55%,var(--violet) 100%);
+  --f-display:"Archivo Black","Arial Black",Impact,sans-serif;
+  --f-ui:"Archivo","Arial",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--black);color:var(--white);overflow:hidden;cursor:none}
+body{font-family:var(--f-ui)}
+[hidden]{display:none!important}
+#fit{position:fixed;inset:0;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:2340px;height:208px;transform-origin:center;overflow:hidden;background:var(--black);display:flex;align-items:center}
+#stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--grad)}
+
+.left{flex:none;height:100%;display:flex;align-items:center;gap:26px;padding:0 34px 0 30px;border-right:2px solid var(--line)}
+.seal{width:150px;height:150px;position:relative}
+.seal::before{content:"";position:absolute;inset:-10px;border-radius:50%;background:conic-gradient(from 200deg,var(--violet),var(--pink),var(--violet));filter:blur(20px);opacity:.5;animation:glow 4s ease-in-out infinite}
+@keyframes glow{50%{opacity:.2}}
+.seal img{position:relative;width:100%;height:100%;display:block;animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.brand{height:78px;width:auto;display:block}
+
+.right{flex:none;height:100%;width:280px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding-right:34px;border-left:2px solid var(--line)}
+#clock{font-family:var(--f-display);font-size:68px;line-height:1;font-variant-numeric:tabular-nums}
+#today{margin-top:10px;font-weight:700;font-size:20px;letter-spacing:.2em;color:var(--mute)}
+
+#scenes{flex:1;min-width:0;height:100%;position:relative;overflow:hidden}
+.scene{position:absolute;inset:0;padding:0 40px;display:flex;align-items:center;gap:36px;opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.scene.on{opacity:1;transform:none}
+.scene.out{opacity:0;transform:translateY(-30px)}
+
+/* cena 1: próximo jogo */
+.mlogo{flex:none;height:110px;width:auto;max-width:200px;object-fit:contain}
+.match{flex:1;min-width:0}
+.eyebrow{font-weight:800;font-size:22px;letter-spacing:.24em;color:var(--mute);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eyebrow b{color:var(--pink)}
+.mline{margin-top:10px;font-family:var(--f-display);font-size:76px;line-height:1;text-transform:uppercase;white-space:nowrap;display:inline-block;transform-origin:left center}
+.mline .vs{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.05em}
+.count{flex:none;display:flex;gap:16px;align-items:flex-start}
+.u{text-align:center}
+.u .n{display:block;font-family:var(--f-display);font-size:80px;line-height:.95;font-variant-numeric:tabular-nums;min-width:1.25em}
+.u .bar{display:block;height:5px;background:var(--grad);margin-top:8px}
+.u .l{display:block;margin-top:8px;font-weight:800;font-size:15px;letter-spacing:.28em;color:var(--mute)}
+.live{flex:none;display:none;align-items:center;gap:22px;font-family:var(--f-display);font-size:84px;line-height:1}
+.live i{width:34px;height:34px;border-radius:50%;background:var(--pink);box-shadow:0 0 34px var(--pink);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.55);opacity:.4}}
+.is-live .count{display:none}
+.is-live .live{display:flex}
+
+/* cena 2: na sequência */
+.qhead{flex:none;font-family:var(--f-display);font-size:34px;line-height:1.05;text-transform:uppercase}
+.cards{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{position:relative;height:136px;padding:0 22px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;
+  --cut:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);clip-path:var(--cut);background:var(--grad);isolation:isolate}
+.card::before{content:"";position:absolute;inset:2px;background:var(--black);clip-path:var(--cut);z-index:-1}
+.card .meta{font-weight:800;font-size:15px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .m{margin:6px 0;font-family:var(--f-display);font-size:26px;line-height:1.05;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .d{font-weight:800;font-size:16px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.card img{width:80px;height:56px;object-fit:contain;object-position:center}
+.card .nogl{display:none}
+
+/* cena 3: patrocinadores */
+.sp{justify-content:space-between;gap:20px}
+.sp img{height:29px;width:auto;display:block;flex:none}
+.sp .sp-realme{height:17px}
+.sp .sp-rehidrat,.sp .sp-asics,.sp .sp-segue-o-fx{height:37px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+  <div class="left"><div class="seal"><img src="../assets/fx-selo.png" alt="Fluxo W7M"></div><img class="brand" src="../assets/segue-o-fx.png" alt="Segue o FX."></div>
+
+  <div id="scenes">
+    <section class="scene on" id="s-next">
+      <img class="mlogo" id="n-logo" alt="" hidden>
+      <div class="match"><div class="eyebrow" id="n-eyebrow">—</div><div class="mline" id="n-line">—</div></div>
+      <div class="count">
+        <div class="u"><span class="n" id="c-d">00</span><span class="bar"></span><span class="l">DIAS</span></div>
+        <div class="u"><span class="n" id="c-h">00</span><span class="bar"></span><span class="l">HORAS</span></div>
+        <div class="u"><span class="n" id="c-m">00</span><span class="bar"></span><span class="l">MIN</span></div>
+        <div class="u"><span class="n" id="c-s">00</span><span class="bar"></span><span class="l">SEG</span></div>
+      </div>
+      <div class="live"><i></i>AO VIVO</div>
+    </section>
+
+    <section class="scene" id="s-queue">
+      <div class="qhead">Na<br>sequência</div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section class="scene sp" id="s-sp">
+      <img src="../logos/patrocinadores/01-banco-do-brasil.png" alt="Banco do Brasil">
+      <img src="../logos/patrocinadores/02-bb-consorcios.png" alt="BB Consórcios">
+      <img class="sp-rehidrat" src="../logos/patrocinadores/03-rehidrat.png" alt="Rehidrat">
+      <img src="../logos/patrocinadores/04-serpro.png" alt="Serpro">
+      <img class="sp-segue-o-fx" src="../logos/patrocinadores/05-segue-o-fx.png" alt="Segue o FX">
+      <img class="sp-asics" src="../logos/patrocinadores/06-asics.png" alt="ASICS">
+      <img src="../logos/patrocinadores/07-fluxo-on.png" alt="Fluxo On">
+      <img src="../logos/patrocinadores/08-redragon.png" alt="Redragon">
+      <img class="sp-realme" src="../logos/patrocinadores/09-realme.png" alt="realme">
+    </section>
+  </div>
+
+  <div class="right"><div id="clock">--:--</div><div id="today">—</div></div>
+</div></div>
+
+<script>
+// Mesma agenda do telão: ../agenda.json (sincronizada do calendário COMPETITIVO FLUXO W7M) + ../overrides.json
+let events=[],OVR={};
+const TEAM={"Kings League":"Fluxo FC"};
+const team=m=>TEAM[m]||"Fluxo W7M";
+const MODS=[
+  [/^(r6|rainbow ?six)\b/i,"Rainbow Six",1],[/^(ff|free ?fire)\b/i,"Free Fire",1],[/^(ffws|lbff)\b/i,"Free Fire",0],
+  [/^(ea ?fc)\b/i,"EA FC",1],[/^(delta ?force|df)\b/i,"Delta Force",1],[/^(cs2?|counter-?strike ?2?)\b/i,"Counter-Strike 2",1],
+  [/^(val|valorant)\b/i,"Valorant",1],[/^(lol|league of legends)\b/i,"League of Legends",1],[/^(cblol)\b/i,"League of Legends",0],
+  [/^(kl|kings ?league)\b/i,"Kings League",1],[/^(fortnite)\b/i,"Fortnite",1]
+];
+function parse(title){
+  let t=String(title||"").trim(),tag=null,rest=t;
+  const m=t.match(/^\[([^\]]+)\]\s*(.*)$/);if(m){tag=m[1].trim();rest=m[2].trim()}
+  let mod=null;
+  for(const [re,name,strip] of MODS){
+    if(tag&&re.test(tag)){mod=name;break}
+    if(!tag&&re.test(rest)){mod=name;if(strip)rest=rest.replace(re,"").trim();break}
+  }
+  if(!mod)mod=tag?tag.replace(/\b\w/g,c=>c.toUpperCase()):"Fluxo W7M";
+  rest=rest.replace(/^#\d+\s*/,"").replace(/\s+/g," ").trim();
+  const parts=rest.split(/(?:^|\s+)vs\.?\s+/i);
+  if(parts.length>1)return{mod,camp:parts[0].trim(),opp:parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / "),vs:true};
+  return{mod,camp:"",opp:rest||mod,vs:false};
+}
+function build(){
+  return events.map(e0=>{const k=Object.keys(OVR).find(k=>String(e0.id||"").startsWith(k));const e=k?{...e0,...OVR[k]}:e0;const p=parse(e.title);
+    const s=new Date(e.start);const en=e.end?new Date(e.end):new Date(s.getTime()+3*3600e3);return{...p,id:e.id||e.start+e.title,t:s,end:en}})
+    .filter(g=>!isNaN(g.t)).sort((a,b)=>a.t-b.t);
+}
+async function sync(){
+  try{const r=await fetch("../overrides.json?t="+Date.now(),{cache:"no-store"});if(r.ok)OVR=await r.json()}catch(e){}
+  try{const r=await fetch("../agenda.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j.events))events=j.events}}catch(e){}
+  games=build();nKey=qKey="";render();
+}
+
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,"0");
+const DIAS=["DOM","SEG","TER","QUA","QUI","SEX","SÁB"],MESES=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+const hm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const fmt=d=>`${DIAS[d.getDay()]} · ${pad(d.getDate())} ${MESES[d.getMonth()]} · ${hm(d)}`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const slug=m=>m.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-");
+const logoSrc=m=>`../logos/${slug(m)}.png`;
+
+function fit(){const f=$("fit"),s=Math.min(f.clientWidth/2340,f.clientHeight/208);$("stage").style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener("resize",fit);fit();
+function fitLine(){const el=$("n-line");el.style.transform="none";const max=el.parentNode.clientWidth;const w=el.offsetWidth;el.style.transform=w>max?`scale(${max/w})`:"none"}
+
+let games=[],nKey="",qKey="";
+function render(){
+  const now=Date.now(),nd=new Date(now);
+  $("clock").textContent=hm(nd);$("today").textContent=`${DIAS[nd.getDay()]} · ${pad(nd.getDate())} ${MESES[nd.getMonth()]}`;
+  const up=games.filter(g=>g.end.getTime()>now),next=up[0],sc=$("s-next");
+  if(!next){if(nKey!=="none"){nKey="none";$("n-eyebrow").textContent="Agenda";$("n-line").textContent="Novos jogos em breve";$("n-logo").hidden=true;sc.classList.remove("is-live");fitLine()}}
+  else{
+    const live=next.t.getTime()<=now,k=next.id+(live?"L":"");
+    if(k!==nKey){nKey=k;
+      $("n-eyebrow").innerHTML=`${esc(next.mod)}${next.camp?" · "+esc(next.camp):""} · <b>${live?"Começou às "+hm(next.t):fmt(next.t)}</b>`;
+      $("n-line").innerHTML=next.vs?`${esc(team(next.mod))} <span class="vs">vs. ${esc(next.opp)}</span>`:`${esc(team(next.mod))} <span class="vs">· ${esc(next.opp)}</span>`;
+      const im=$("n-logo");im.hidden=true;im.onload=()=>{im.hidden=false;fitLine()};im.onerror=()=>{im.hidden=true;fitLine()};im.src=logoSrc(next.mod);
+      sc.classList.toggle("is-live",live);fitLine();
+    }
+    const s=Math.floor(Math.max(0,next.t-now)/1000);
+    $("c-d").textContent=pad(Math.floor(s/86400));$("c-h").textContent=pad(Math.floor(s%86400/3600));$("c-m").textContent=pad(Math.floor(s%3600/60));$("c-s").textContent=pad(s%60);
+  }
+  const rest=up.slice(1,4),qk=rest.map(g=>g.id).join("|");
+  if(qk!==qKey){qKey=qk;
+    $("cards").innerHTML=rest.length?rest.map(g=>`<div class="card"><div style="min-width:0"><div class="meta">${esc(g.mod)}${g.vs&&g.camp?" · "+esc(g.camp):""}</div><div class="m">${esc(g.vs?"vs. "+g.opp:g.opp)}</div><div class="d">${fmt(g.t)}</div></div><img src="${logoSrc(g.mod)}" alt="" onerror="this.className='nogl'"></div>`).join(""):`<div class="eyebrow">Sem outros jogos agendados</div>`;
+  }
+}
+
+// Rotação das cenas: próximo jogo fica mais tempo; durante a live, só ele fica na tela
+const ORDER=[["s-next",14000],["s-queue",9000],["s-next",14000],["s-sp",8000]];
+let si=0;
+function nextScene(){
+  const liveNow=$("s-next").classList.contains("is-live");
+  const cur=document.querySelector(".scene.on");
+  let target=liveNow?"s-next":ORDER[(si+1)%ORDER.length][0];
+  if(!liveNow)si=(si+1)%ORDER.length;
+  if(cur&&cur.id!==target){cur.classList.remove("on");cur.classList.add("out");setTimeout(()=>cur.classList.remove("out"),800);$(target).classList.add("on");if(target==="s-next")fitLine()}
+  setTimeout(nextScene,liveNow?10000:ORDER[si][1]);
+}
+setTimeout(nextScene,ORDER[0][1]);
+
+render();setInterval(render,250);sync();setInterval(sync,5*60e3);document.fonts&&document.fonts.ready.then(fitLine);
+
+// Recarrega sozinho quando uma nova versão for publicada
+let sig=null;
+async function checkVersion(){try{const r=await fetch(location.pathname+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)return;const t=await r.text();const s=t.length+":"+t.slice(-200);if(sig===null)sig=s;else if(s!==sig)location.reload()}catch(e){}}
+checkVersion();setInterval(checkVersion,5*60e3);
+</script>
+</body>
+</html>
