@@ -160,7 +160,7 @@ button.pri{background:var(--pink);border-color:var(--pink)}
   <section id="main">
     <div class="modrow"><img class="modlogo" id="m-logo" alt="" hidden><div class="strip" id="m-mod">—</div></div>
     <div class="camp" id="m-camp">—</div>
-    <div class="vs"><span class="us">Fluxo W7M</span><span class="x">vs.</span><span class="them" id="m-opp">—</span></div>
+    <div class="vs"><span class="us" id="m-us">Fluxo W7M</span><span class="x">vs.</span><span class="them" id="m-opp">—</span></div>
     <div class="count">
       <div class="unit"><span class="n" id="c-d">00</span><span class="bar"></span><span class="l">DIAS</span></div>
       <div class="unit"><span class="n" id="c-h">00</span><span class="bar"></span><span class="l">HORAS</span></div>
@@ -241,7 +241,10 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const slug=m=>m.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-");
 const logoSrc=m=>`logos/${slug(m)}.png`;
 const big=g=>g.vs?g.opp:g.opp;
-const line=g=>g.vs?`Fluxo W7M vs. ${g.opp}`:`Fluxo W7M · ${g.opp}`;
+// Nome do time por modalidade (padrão: Fluxo W7M)
+const TEAM={"Kings League":"Fluxo FC"};
+const team=m=>TEAM[m]||"Fluxo W7M";
+const line=g=>g.vs?`${team(g.mod)} vs. ${g.opp}`:`${team(g.mod)} · ${g.opp}`;
 
 function fit(){const f=$("fit");const s=Math.min(f.clientWidth/1920,f.clientHeight/1080);$("stage").style.transform=`translate(-50%,-50%) scale(${s})`}
 addEventListener("resize",fit);addEventListener("fullscreenchange",fit);fit();
@@ -270,12 +273,12 @@ function render(){
   const now=Date.now(),nd=new Date(now);
   $("clock").textContent=hm(nd);$("today").textContent=`${DIAS[nd.getDay()]} · ${pad(nd.getDate())} DE ${MESES[nd.getMonth()]} · ${nd.getFullYear()}`;
   const up=games.filter(g=>g.end.getTime()>now),next=up[0],main=$("main");
-  if(!next){currentKey="";$("m-opp").textContent="Em breve";$("m-mod").textContent="Agenda";$("m-camp").textContent="";$("m-when").textContent="Novos jogos em breve";["d","h","m","s"].forEach(k=>$("c-"+k).textContent="00");main.classList.remove("is-live");main.classList.add("is-br");setEmbed(null)}
+  if(!next){currentKey="";$("m-us").textContent="Fluxo W7M";$("m-opp").textContent="Em breve";$("m-mod").textContent="Agenda";$("m-camp").textContent="";$("m-when").textContent="Novos jogos em breve";["d","h","m","s"].forEach(k=>$("c-"+k).textContent="00");main.classList.remove("is-live");main.classList.add("is-br");setEmbed(null)}
   else{
     const live=next.t.getTime()<=now;
     const k=next.id+(live?"L":"");
     if(k!==currentKey){currentKey=k;
-      $("m-opp").textContent=big(next);$("m-mod").textContent=next.mod;$("m-camp").textContent=next.camp;
+      $("m-us").textContent=team(next.mod);$("m-opp").textContent=big(next);$("m-mod").textContent=next.mod;$("m-camp").textContent=next.camp;
       const im=$("m-logo");im.hidden=true;const row=im.parentNode;row.classList.remove("has-logo");im.onload=()=>{im.hidden=false;row.classList.add("has-logo")};im.onerror=()=>{im.hidden=true;row.classList.remove("has-logo")};im.src=logoSrc(next.mod);
       main.classList.toggle("is-br",!next.vs);main.classList.toggle("is-live",live);
       $("m-when").innerHTML=live?`Começou às <b>${hm(next.t)}</b> · previsão de término <b>${hm(next.end)}</b>`:`O jogo começa <b>${fmt(next.t)} · BRT</b>`;
