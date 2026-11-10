@@ -1,14 +1,7 @@
 {
   "source": "COMPETITIVO FLUXO W7M",
-  "updated": "2026-11-09T17:05:11-03:00",
+  "updated": "2026-11-10T07:23:26-03:00",
   "events": [
-    {
-      "id": "6l0h3t7ou444pav50n95070rkc@google.com-2026-11-09T02:30:00-03:00",
-      "title": "[R6] Osaka Major vs Edward Gaming",
-      "start": "2026-11-09T02:30:00-03:00",
-      "end": "2026-11-09T05:00:00-03:00",
-      "live": ""
-    },
     {
       "id": "08mcgetoi0dr521ujm52hjc30n@google.com-2026-11-09T19:00:00-03:00",
       "title": "[KL] vs Capim FC",
@@ -52,6 +45,13 @@
       "live": ""
     },
     {
+      "id": "svb8j41eqsbuvafupuuda3sc98@google.com-2026-11-20T17:00:00-03:00",
+      "title": "(VLR) VCT Kickoff CQ vs ???",
+      "start": "2026-11-20T17:00:00-03:00",
+      "end": "2026-11-20T20:00:00-03:00",
+      "live": ""
+    },
+    {
       "id": "15jj1jff6r83ovr3oamjajej5u@google.com-2026-11-21T12:00:00-03:00",
       "title": "[EA FC] FC Pro Cup 1",
       "start": "2026-11-21T12:00:00-03:00",
@@ -63,13 +63,6 @@
       "title": "[EA FC] FC Pro Cup 1",
       "start": "2026-11-22T12:00:00-03:00",
       "end": "2026-11-22T18:00:00-03:00",
-      "live": ""
-    },
-    {
-      "id": "svb8j41eqsbuvafupuuda3sc98@google.com-2026-11-22T14:00:00-03:00",
-      "title": "(VLR) VCT Kickoff CQ vs ???",
-      "start": "2026-11-22T14:00:00-03:00",
-      "end": "2026-11-22T17:00:00-03:00",
       "live": ""
     },
     {
