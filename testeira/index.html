@@ -126,12 +126,12 @@ const team=m=>TEAM[m]||"Fluxo W7M";
 const MODS=[
   [/^(r6|rainbow ?six)\b/i,"Rainbow Six",1],[/^(ff|free ?fire)\b/i,"Free Fire",1],[/^(ffws|lbff)\b/i,"Free Fire",0],
   [/^(ea ?fc)\b/i,"EA FC",1],[/^(delta ?force|df)\b/i,"Delta Force",1],[/^(cs2?|counter-?strike ?2?)\b/i,"Counter-Strike 2",1],
-  [/^(val|valorant)\b/i,"Valorant",1],[/^(lol|league of legends)\b/i,"League of Legends",1],[/^(cblol)\b/i,"League of Legends",0],
+  [/^(val|vlr|valorant)\b/i,"Valorant",1],[/^(lol|league of legends)\b/i,"League of Legends",1],[/^(cblol)\b/i,"League of Legends",0],
   [/^(kl|kings ?league)\b/i,"Kings League",1],[/^(fortnite)\b/i,"Fortnite",1]
 ];
 function parse(title){
   let t=String(title||"").trim(),tag=null,rest=t;
-  const m=t.match(/^\[([^\]]+)\]\s*(.*)$/);if(m){tag=m[1].trim();rest=m[2].trim()}
+  const m=t.match(/^[\[(]([^\])]+)[\])]\s*(.*)$/);if(m){tag=m[1].trim();rest=m[2].trim()}
   let mod=null;
   for(const [re,name,strip] of MODS){
     if(tag&&re.test(tag)){mod=name;break}
@@ -140,7 +140,7 @@ function parse(title){
   if(!mod)mod=tag?tag.replace(/\b\w/g,c=>c.toUpperCase()):"Fluxo W7M";
   rest=rest.replace(/^#\d+\s*/,"").replace(/\s+/g," ").trim();
   const parts=rest.split(/(?:^|\s+)vs\.?\s+/i);
-  if(parts.length>1)return{mod,camp:parts[0].trim(),opp:parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / "),vs:true};
+  if(parts.length>1)return{mod,camp:parts[0].trim(),opp:(parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / ").replace(/^\?+$/,"")||"A definir"),vs:true};
   return{mod,camp:"",opp:rest||mod,vs:false};
 }
 function build(){

@@ -51,6 +51,7 @@ header{position:absolute;top:60px;left:96px;right:96px;display:flex;justify-cont
 .item .gl{width:96px;height:58px;object-fit:contain;object-position:right center;display:block;opacity:.95}
 .item .nogl{display:none}
 .item .gl-ea-fc{height:46px;object-position:center center}
+.item .gl-valorant{height:50px;object-position:center center}
 .camp{margin-top:22px;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 .vs{margin-top:20px;font-family:var(--f-display);text-transform:uppercase;line-height:.92;letter-spacing:-.01em}
 .vs .us{display:block;font-size:150px}
@@ -201,7 +202,7 @@ const MODS=[
   [/^(ea ?fc)\b/i,"EA FC",1],
   [/^(delta ?force|df)\b/i,"Delta Force",1],
   [/^(cs2?|counter-?strike ?2?)\b/i,"Counter-Strike 2",1],
-  [/^(val|valorant)\b/i,"Valorant",1],
+  [/^(val|vlr|valorant)\b/i,"Valorant",1],
   [/^(lol|league of legends)\b/i,"League of Legends",1],
   [/^(cblol)\b/i,"League of Legends",0],
   [/^(kl|kings ?league)\b/i,"Kings League",1],
@@ -209,7 +210,7 @@ const MODS=[
 ];
 function parse(title){
   let t=String(title||"").trim(),tag=null,rest=t;
-  const m=t.match(/^\[([^\]]+)\]\s*(.*)$/);if(m){tag=m[1].trim();rest=m[2].trim()}
+  const m=t.match(/^[\[(]([^\])]+)[\])]\s*(.*)$/);if(m){tag=m[1].trim();rest=m[2].trim()}
   let mod=null;
   for(const [re,name,strip] of MODS){
     if(tag&&re.test(tag)){mod=name;break}
@@ -218,7 +219,7 @@ function parse(title){
   if(!mod)mod=tag?tag.replace(/\b\w/g,c=>c.toUpperCase()):"Fluxo W7M";
   rest=rest.replace(/^#\d+\s*/,"").replace(/\s+/g," ").trim();
   const parts=rest.split(/(?:^|\s+)vs\.?\s+/i);
-  if(parts.length>1)return{mod,camp:parts[0].trim(),opp:parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / "),vs:true};
+  if(parts.length>1)return{mod,camp:parts[0].trim(),opp:(parts.slice(1).join(" vs ").trim().replace(/\s*\/\s*/g," / ").replace(/^\?+$/,"")||"A definir"),vs:true};
   return{mod,camp:"",opp:rest||mod,vs:false};
 }
 function build(){
