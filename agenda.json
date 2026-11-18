@@ -1,14 +1,7 @@
 {
   "source": "COMPETITIVO FLUXO W7M",
-  "updated": "2026-11-17T15:49:05-03:00",
+  "updated": "2026-11-17T22:23:46-03:00",
   "events": [
-    {
-      "id": "1l0i20nf13jk9dh3l579b3khpe@google.com-2026-11-16T18:00:00-03:00",
-      "title": "[KL] vs Dibrados",
-      "start": "2026-11-16T18:00:00-03:00",
-      "end": "2026-11-16T19:00:00-03:00",
-      "live": ""
-    },
     {
       "id": "107u047mets0rho6pss7oek5q8@google.com-2026-11-19T07:15:00-03:00",
       "title": "FF World Series",
@@ -38,10 +31,10 @@
       "live": ""
     },
     {
-      "id": "5vs1nkpia50ur4tp40m2ous4lr@google.com-2026-11-23T18:00:00-03:00",
+      "id": "5vs1nkpia50ur4tp40m2ous4lr@google.com-2026-11-23T20:00:00-03:00",
       "title": "[KL] vs Dendele",
-      "start": "2026-11-23T18:00:00-03:00",
-      "end": "2026-11-23T19:00:00-03:00",
+      "start": "2026-11-23T20:00:00-03:00",
+      "end": "2026-11-23T21:00:00-03:00",
       "live": ""
     },
     {
