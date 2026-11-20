@@ -264,12 +264,12 @@ checkUpdate();setInterval(checkUpdate,60e3);
 async function keepAwake(){try{await navigator.wakeLock.request('screen')}catch(e){}}
 document.addEventListener('visibilitychange',function(){if(!document.hidden)keepAwake()});keepAwake();
 // ===== highlights: depois das 3 cenas, pausa o loop e toca alguns segundos de cada jogador (YouTube, sem som) =====
-var CLIPS=[ // jogada inteira de cada um (sem LOUD)
-  {nm:'tuyz',  id:'YxlvfIue6Bw', s:612, e:660},
-  {nm:'mazin', id:'E_ANupfjxGY', s:0,   e:38},
-  {nm:'qck',   id:'wfi5SRdu9jc', s:4,   e:44},
-  {nm:'jzz',   id:'rsTYud4h4GE', s:0,   e:57},
-  {nm:'palla', id:'I1xQ12HeXG0', s:0,   e:55}
+var CLIPS=[ // jogada inteira, cortando antes do replay (nada da LOUD)
+  {nm:'tuyz',  id:'YxlvfIue6Bw', s:626, e:650},
+  {nm:'mazin', id:'E_ANupfjxGY', s:1,   e:20},
+  {nm:'qck',   id:'3olE7_-0O1M', s:44,  e:79},
+  {nm:'jzz',   id:'rsTYud4h4GE', s:1,   e:44},
+  {nm:'palla', id:'I1xQ12HeXG0', s:1,   e:50}
 ];
 // música de fundo (NCS, sem direitos autorais) — troque pela URL: ?musica=ID_DO_VIDEO
 var MUSIC=(location.search.match(/[?&]musica=([\w-]{11})/)||[])[1];MUSIC=MUSIC?[MUSIC]:['MEkaqZecpUQ','JNl1_hRwpXE'];
@@ -288,8 +288,11 @@ window.onYouTubeIframeAPIReady=function(){
 function anims(){return document.getAnimations().filter(function(a){return a.effect&&a.effect.target&&!a.effect.target.closest('#hl')&&!a.effect.target.closest('.sponsors')})}
 function sound(){try{if(navigator.userActivation&&navigator.userActivation.hasBeenActive){yt.unMute();yt.setVolume(85)}else yt.mute()}catch(e){}}
 function active(){return navigator.userActivation&&navigator.userActivation.hasBeenActive}
-function musSync(){if(!musReady)return;try{if(active()){mus.unMute();mus.setVolume(45)}else mus.mute();
-  var st=mus.getPlayerState();if(hlOn){if(st===1)mus.pauseVideo()}else if(st!==1&&st!==3)mus.playVideo()}catch(e){}}
+var musVol=0;
+function musSync(){if(!musReady)return;try{if(active())mus.unMute();else mus.mute();
+  var st=mus.getPlayerState();if(st!==1&&st!==3)mus.playVideo()}catch(e){}}
+// abaixa a música nos highlights (não para), volta ao normal depois — com fade
+setInterval(function(){if(!musReady)return;var tgt=hlOn?10:45;if(musVol===tgt)return;musVol+=musVol<tgt?Math.min(3,tgt-musVol):-Math.min(3,musVol-tgt);try{mus.setVolume(musVol)}catch(e){}},80);
 setInterval(musSync,800);
 ['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){setTimeout(function(){sound();musSync()},50)},true)});
 function replay(el){el.classList.remove('in');void el.offsetWidth;el.classList.add('in')}
@@ -301,7 +304,7 @@ function showClip(){var c=CLIPS[hlIdx];(window.__hl=window.__hl||[]).push(c.nm+'
   clearTimeout(hlTimer);hlTimer=setTimeout(nextClip,(c.e-c.s+10)*1000); // segurança se o vídeo travar
 }
 function nextClip(){clearTimeout(hlTimer);hlIdx++;if(hlIdx>=CLIPS.length)return endHL();showClip()}
-function startHL(){if(hlOn||!ytReady)return;hlOn=true;try{lastCyc=Math.floor(document.querySelector('.prog').getAnimations()[0].currentTime/30000)}catch(e){}hlIdx=0;try{mus.pauseVideo()}catch(e){}anims().forEach(function(a){a.pause()});
+function startHL(){if(hlOn||!ytReady)return;hlOn=true;try{lastCyc=Math.floor(document.querySelector('.prog').getAnimations()[0].currentTime/30000)}catch(e){}hlIdx=0;anims().forEach(function(a){a.pause()});
   document.getElementById('hl').classList.add('on');showClip()}
 function endHL(){hlOn=false;clearTimeout(hlTimer);try{yt.stopVideo()}catch(e){}
   document.getElementById('hl').classList.remove('on');
