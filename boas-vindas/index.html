@@ -131,7 +131,7 @@ html,body{height:100%;margin:0;background:var(--black);color:var(--white);overfl
 #fsbtn.hide{opacity:0;pointer-events:none}
 body.idle{cursor:none}
 /* highlights (vídeos do YouTube, sem som, poucos segundos de cada) */
-#hl{position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;transition:opacity .6s;background:var(--black)}
+#hl{position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;transition:opacity 1s ease;background:var(--black)}
 #hl.on{opacity:1}
 #hl .shards{opacity:.9}
 #hl .pcard{position:absolute;left:80px;top:180px;width:520px;height:760px;overflow:hidden;background:var(--shard);clip-path:polygon(0 0,100% 0,100% 94%,90% 100%,0 100%)}
@@ -265,7 +265,7 @@ async function keepAwake(){try{await navigator.wakeLock.request('screen')}catch(
 document.addEventListener('visibilitychange',function(){if(!document.hidden)keepAwake()});keepAwake();
 // ===== highlights: depois das 3 cenas, pausa o loop e toca alguns segundos de cada jogador (YouTube, sem som) =====
 var CLIPS=[ // jogada inteira, cortando antes do replay (nada da LOUD)
-  {nm:'tuyz',  id:'0x5scOqFj4c', s:8900, e:8956}, // La Masia x 2Game, final do VCB 2026
+  {nm:'tuyz',  id:'0x5scOqFj4c', s:8900, e:8939}, // La Masia x 2Game, final do VCB 2026
   {nm:'mazin', id:'E_ANupfjxGY', s:1,   e:20},
   {nm:'qck',   id:'3olE7_-0O1M', s:44,  e:79},
   {nm:'jzz',   id:'rsTYud4h4GE', s:1,   e:44},
@@ -307,8 +307,10 @@ function nextClip(){clearTimeout(hlTimer);hlIdx++;if(hlIdx>=CLIPS.length)return 
 function startHL(){if(hlOn||!ytReady)return;hlOn=true;try{lastCyc=Math.floor(document.querySelector('.prog').getAnimations()[0].currentTime/30000)}catch(e){}hlIdx=0;anims().forEach(function(a){a.pause()});
   document.getElementById('hl').classList.add('on');showClip()}
 function endHL(){hlOn=false;clearTimeout(hlTimer);try{yt.stopVideo()}catch(e){}
-  document.getElementById('hl').classList.remove('on');
-  anims().forEach(function(a){a.play()});musSync()}
+  // pula direto para a entrada da cena da line (sem voltar à tela de boas-vindas) e faz o crossfade
+  var base=0;try{base=Math.floor(document.querySelector('.prog').getAnimations()[0].currentTime/30000)*30000}catch(e){}
+  anims().forEach(function(a){try{a.currentTime=base+10200}catch(e){}a.play()});
+  document.getElementById('hl').classList.remove('on');musSync()}
 // detecta o fim do ciclo das 3 cenas pela barra de progresso
 setInterval(function(){if(hlOn||!ytReady)return;var p=document.querySelector('.prog');if(!p)return;
   var a=p.getAnimations()[0];if(!a)return;var cyc=Math.floor(a.currentTime/30000),t=a.currentTime%30000;
