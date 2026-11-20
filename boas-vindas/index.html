@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Casa Fluxo · Boas-vindas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800&family=Permanent+Marker&display=swap">
+<style>
+/* Telão de boas-vindas da Casa Fluxo (watch party Valorant 20/11). Palco 1920x1080 escalado, mesma identidade do painel principal. */
+:root{
+  --black:#060507; --shard:#111014; --line:#2a2530;
+  --pink:#ff1f55; --violet:#a42cff; --white:#fff; --mute:#9a94a2;
+  --grad:linear-gradient(90deg,var(--pink) 0%,#ff2a8a 55%,var(--violet) 100%);
+  --f-display:"Archivo Black","Arial Black",Impact,sans-serif;
+  --f-ui:"Archivo",Arial,sans-serif;
+  --f-brush:"Permanent Marker","Marker Felt",cursive;
+  --loop:30s;
+}
+html,body{height:100%;margin:0;background:var(--black);color:var(--white);overflow:hidden;font-family:var(--f-ui)}
+#fit{position:fixed;inset:0;overflow:hidden;background:var(--black)}
+#stage{width:1920px;height:1080px;position:absolute;left:50%;top:50%;overflow:hidden;transform-origin:center;background:var(--black)}
+.shards{position:absolute;inset:0;pointer-events:none;
+  background:
+   linear-gradient(118deg,transparent 0 62%,var(--shard) 62% 70%,transparent 70%),
+   linear-gradient(64deg,transparent 0 8%,var(--shard) 8% 13%,transparent 13%),
+   linear-gradient(150deg,transparent 0 84%,var(--shard) 84% 90%,transparent 90%)}
+.glow{position:absolute;width:1100px;height:1100px;border-radius:50%;filter:blur(160px);opacity:.28;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+.glow.a{background:var(--pink);left:-380px;top:-420px}
+.glow.b{background:var(--violet);right:-420px;bottom:-480px;animation-delay:-9s}
+@keyframes drift{to{transform:translate(120px,80px) scale(1.08)}}
+
+/* topo */
+.top{position:absolute;left:80px;right:80px;top:52px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.top .brand{display:flex;align-items:center;gap:22px}
+.top .brand img{height:92px}
+.top .tag{font:800 22px/1 var(--f-ui);letter-spacing:.32em;text-transform:uppercase;color:var(--mute)}
+.top .tag b{color:var(--white)}
+.live{display:flex;align-items:center;gap:14px;font:800 22px/1 var(--f-ui);letter-spacing:.24em;text-transform:uppercase}
+.live i{width:16px;height:16px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 0 rgba(255,31,85,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 18px rgba(255,31,85,0)}100%{box-shadow:0 0 0 0 rgba(255,31,85,0)}}
+
+/* cenas */
+.scene{position:absolute;inset:0;opacity:0;animation:var(--loop) linear infinite}
+.s1{animation-name:show1}.s2{animation-name:show2}.s3{animation-name:show3}
+@keyframes show1{0%{opacity:0}2%{opacity:1}31%{opacity:1}34%{opacity:0}100%{opacity:0}}
+@keyframes show2{0%,33%{opacity:0}36%{opacity:1}70%{opacity:1}73%{opacity:0}100%{opacity:0}}
+@keyframes show3{0%,72%{opacity:0}75%{opacity:1}97%{opacity:1}100%{opacity:0}}
+
+/* cena 1: boas-vindas + foto do time */
+.s1 .copy{position:absolute;left:80px;top:270px;width:1040px}
+.kicker{font:800 26px/1 var(--f-ui);letter-spacing:.34em;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s1 h1{font:400 104px/.95 var(--f-display);margin:26px 0 0;text-transform:uppercase;letter-spacing:-.01em}
+.s1 h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s1 .brush{font:400 54px/1 var(--f-brush);color:var(--white);margin-top:26px;transform:rotate(-2deg);display:inline-block}
+.match{margin-top:44px;display:flex;align-items:center;gap:26px;padding:22px 30px;border:2px solid var(--line);background:rgba(17,16,20,.75);width:max-content}
+.match .vs{font:400 36px/1 var(--f-display)}
+.match .vs span{color:var(--pink)}
+.match .when{font:800 24px/1.25 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);border-left:2px solid var(--line);padding-left:26px}
+.match .when b{color:var(--white);font-size:34px;letter-spacing:.04em}
+.groupwrap{position:absolute;right:110px;top:150px;width:640px;height:800px;transform:rotate(3deg)}
+.groupwrap:before{content:"";position:absolute;inset:-10px;background:var(--grad);clip-path:polygon(4% 0,100% 0,96% 100%,0 100%)}
+.groupwrap .ph{position:absolute;inset:0;background:url(img/grupo.jpg) center 30%/cover;clip-path:polygon(4% 0,100% 0,96% 100%,0 100%)}
+.s1 .copy>*{opacity:0;transform:translateY(40px);animation:var(--loop) cubic-bezier(.2,.8,.2,1) infinite}
+.s1 .copy>*:nth-child(1){animation-name:in1}.s1 .copy>*:nth-child(2){animation-name:in2}
+.s1 .copy>*:nth-child(3){animation-name:in3}.s1 .copy>*:nth-child(4){animation-name:in4}
+@keyframes in1{0%,1%{opacity:0;transform:translateY(40px)}5%,100%{opacity:1;transform:none}}
+@keyframes in2{0%,3%{opacity:0;transform:translateY(40px)}7%,100%{opacity:1;transform:none}}
+@keyframes in3{0%,5%{opacity:0;transform:translateY(40px)}9%,100%{opacity:1;transform:none}}
+@keyframes in4{0%,7%{opacity:0;transform:translateY(40px)}11%,100%{opacity:1;transform:none}}
+.groupwrap{animation:var(--loop) cubic-bezier(.2,.8,.2,1) infinite groupin}
+@keyframes groupin{0%,2%{opacity:0;transform:translateX(160px) rotate(8deg)}9%{opacity:1;transform:rotate(3deg)}33%{transform:rotate(2deg) scale(1.03)}100%{opacity:1;transform:rotate(2deg) scale(1.03)}}
+
+/* cena 2: line */
+.s2 .head{position:absolute;left:80px;top:190px;display:flex;align-items:baseline;gap:28px}
+.s2 .head h2{font:400 96px/1 var(--f-display);margin:0;text-transform:uppercase}
+.s2 .head h2 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cards{position:absolute;left:80px;right:80px;top:330px;height:600px;display:grid;grid-template-columns:repeat(6,1fr);gap:22px}
+.card{position:relative;overflow:hidden;background:var(--shard);clip-path:polygon(0 0,100% 0,100% 92%,88% 100%,0 100%);opacity:0;animation:var(--loop) cubic-bezier(.2,.8,.2,1) infinite}
+.card .ph{position:absolute;inset:0;background-size:cover;background-position:center 18%;transform:scale(1.06)}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(6,5,7,.92) 88%)}
+.card .bar{position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--grad);z-index:2}
+.card .nm{position:absolute;left:22px;bottom:30px;z-index:2;font:400 54px/1 var(--f-display);text-transform:lowercase}
+.card:nth-child(1){animation-name:c1}.card:nth-child(2){animation-name:c2}.card:nth-child(3){animation-name:c3}
+.card:nth-child(4){animation-name:c4}.card:nth-child(5){animation-name:c5}.card:nth-child(6){animation-name:c6}
+@keyframes c1{0%,34%{opacity:0;transform:translateY(80px)}38%,100%{opacity:1;transform:none}}
+@keyframes c2{0%,35%{opacity:0;transform:translateY(80px)}39%,100%{opacity:1;transform:none}}
+@keyframes c3{0%,36%{opacity:0;transform:translateY(80px)}40%,100%{opacity:1;transform:none}}
+@keyframes c4{0%,37%{opacity:0;transform:translateY(80px)}41%,100%{opacity:1;transform:none}}
+@keyframes c5{0%,38%{opacity:0;transform:translateY(80px)}42%,100%{opacity:1;transform:none}}
+@keyframes c6{0%,39%{opacity:0;transform:translateY(80px)}43%,100%{opacity:1;transform:none}}
+.card .ph{animation:var(--loop) linear infinite kb}
+@keyframes kb{0%,34%{transform:scale(1.14)}72%,100%{transform:scale(1.02)}}
+
+/* cena 3: o que rola hoje */
+.s3 .wrap{position:absolute;left:80px;right:80px;top:200px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.s3 h2{font:400 120px/.92 var(--f-display);margin:0;text-transform:uppercase}
+.s3 h2 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s3 .brush{font:400 50px/1.1 var(--f-brush);margin-top:30px;transform:rotate(-2deg);display:inline-block}
+.list{display:flex;flex-direction:column;gap:22px}
+.item{display:flex;align-items:center;gap:28px;padding:28px 34px;border:2px solid var(--line);background:rgba(17,16,20,.8);opacity:0;animation:var(--loop) cubic-bezier(.2,.8,.2,1) infinite}
+.item .n{font:400 64px/1 var(--f-display);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;min-width:90px}
+.item .t{font:800 40px/1.1 var(--f-ui);text-transform:uppercase;letter-spacing:.02em}
+.item .t small{display:block;font:700 22px/1.3 var(--f-ui);letter-spacing:.14em;color:var(--mute);margin-top:6px}
+.item:nth-child(1){animation-name:i1}.item:nth-child(2){animation-name:i2}.item:nth-child(3){animation-name:i3}
+@keyframes i1{0%,74%{opacity:0;transform:translateX(80px)}78%,100%{opacity:1;transform:none}}
+@keyframes i2{0%,76%{opacity:0;transform:translateX(80px)}80%,100%{opacity:1;transform:none}}
+@keyframes i3{0%,78%{opacity:0;transform:translateX(80px)}82%,100%{opacity:1;transform:none}}
+
+/* rodapé patrocinadores */
+.sponsors{position:absolute;left:0;right:0;bottom:0;height:120px;display:flex;align-items:center;gap:40px;padding:0 80px;background:linear-gradient(0deg,rgba(6,5,7,1) 40%,rgba(6,5,7,0));z-index:6}
+.sponsors .lbl{font:800 18px/1.2 var(--f-ui);letter-spacing:.3em;text-transform:uppercase;color:var(--mute);white-space:nowrap;padding-right:34px;border-right:2px solid var(--line)}
+.sponsors .row{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:28px}
+.sponsors img{height:30px;width:auto;flex:0 0 auto;opacity:.92;animation:shine 6s ease-in-out infinite}
+.sponsors img:nth-child(2){animation-delay:.4s}.sponsors img:nth-child(3){animation-delay:.8s}.sponsors img:nth-child(4){animation-delay:1.2s}
+.sponsors img:nth-child(5){animation-delay:1.6s}.sponsors img:nth-child(6){animation-delay:2s}.sponsors img:nth-child(7){animation-delay:2.4s}.sponsors img:nth-child(8){animation-delay:2.8s}
+@keyframes shine{0%,80%,100%{opacity:.85;filter:none}88%{opacity:1;filter:drop-shadow(0 0 14px rgba(255,31,85,.8))}}
+.sponsors:before{content:"";position:absolute;left:0;right:0;top:20px;height:2px;background:var(--grad);opacity:.6}
+.prog{position:absolute;left:0;top:0;height:6px;background:var(--grad);z-index:7;animation:var(--loop) linear infinite prog}
+@keyframes prog{from{width:0}to{width:100%}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:0s!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+  <div class="glow a"></div><div class="glow b"></div><div class="shards"></div>
+  <div class="prog"></div>
+
+  <div class="top">
+    <div class="brand"><img src="../assets/fx-selo.png" alt="Fluxo W7M"><div class="tag"><b>Casa Fluxo</b> · Watch party Valorant</div></div>
+    <div class="live"><i></i>Office de portas abertas</div>
+  </div>
+
+  <!-- CENA 1 -->
+  <section class="scene s1">
+    <div class="copy">
+      <div class="kicker">Torcida, a casa é de vocês</div>
+      <h1>Bem-vindos à<br><span class="g">Casa Fluxo</span></h1>
+      <div class="brush">Hoje é dia de estreia!</div>
+      <div class="match">
+        <div class="vs">FLUXO W7M <span>x</span> O INTELECTO</div>
+        <div class="when"><b>17h</b><br>Fase Suíça · Kickoff</div>
+      </div>
+    </div>
+    <div class="groupwrap"><div class="ph"></div></div>
+  </section>
+
+  <!-- CENA 2 -->
+  <section class="scene s2">
+    <div class="head"><div class="kicker">Valorant · Fluxo W7M</div></div>
+    <div class="head" style="top:230px"><h2>Nossa <span class="g">line</span></h2></div>
+    <div class="cards">
+      <div class="card"><div class="ph" style="background-image:url(img/tuyz.jpg)"></div><div class="nm">tuyz</div><div class="bar"></div></div>
+      <div class="card"><div class="ph" style="background-image:url(img/mazin.jpg)"></div><div class="nm">mazin</div><div class="bar"></div></div>
+      <div class="card"><div class="ph" style="background-image:url(img/qck.jpg)"></div><div class="nm">qck</div><div class="bar"></div></div>
+      <div class="card"><div class="ph" style="background-image:url(img/jzz.jpg)"></div><div class="nm">jzz</div><div class="bar"></div></div>
+      <div class="card"><div class="ph" style="background-image:url(img/palla.jpg)"></div><div class="nm">palla</div><div class="bar"></div></div>
+      <div class="card"><div class="ph" style="background-image:url(img/stk.jpg)"></div><div class="nm">stk</div><div class="bar"></div></div>
+    </div>
+  </section>
+
+  <!-- CENA 3 -->
+  <section class="scene s3">
+    <div class="wrap">
+      <div>
+        <div class="kicker">Hoje na Casa Fluxo</div>
+        <h2 style="margin-top:24px">Faz <span class="g">barulho</span> que eles escutam</h2>
+        <div class="brush">#SegueOFluxo</div>
+      </div>
+      <div class="list">
+        <div class="item"><div class="n">01</div><div class="t">X1 de Valorant<small>Desafie a torcida nos intervalos</small></div></div>
+        <div class="item"><div class="n">02</div><div class="t">Meet &amp; greet<small>Com os jogadores depois do jogo</small></div></div>
+        <div class="item"><div class="n">03</div><div class="t">Comida e bebida<small>Fica à vontade, a casa é sua</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sponsors">
+    <div class="lbl">Patrocinadores</div>
+    <div class="row">
+      <img src="../logos/patrocinadores/01-banco-do-brasil.png" alt="Banco do Brasil">
+      <img src="../logos/patrocinadores/02-bb-consorcios.png" alt="BB Consórcios">
+      <img src="../logos/patrocinadores/04-serpro.png" alt="Serpro">
+      <img src="../logos/patrocinadores/06-asics.png" alt="ASICS">
+      <img src="../logos/patrocinadores/03-rehidrat.png" alt="Rehidrat">
+      <img src="../logos/patrocinadores/07-fluxo-on.png" alt="Fluxo On">
+      <img src="../logos/patrocinadores/08-redragon.png" alt="Redragon">
+      <img src="../logos/patrocinadores/09-realme.png" alt="realme">
+    </div>
+  </div>
+</div></div>
+<script>
+// encaixa o palco 1920x1080 em qualquer tela
+function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);document.getElementById('stage').style.transform='translate(-50%,-50%) scale('+s+')'}
+addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>
