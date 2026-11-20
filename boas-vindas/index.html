@@ -279,7 +279,7 @@ window.onYouTubeIframeAPIReady=function(){
   yt=new YT.Player('ytp',{host:'https://www.youtube-nocookie.com',playerVars:{autoplay:1,mute:1,controls:0,cc_load_policy:0,rel:0,modestbranding:1,iv_load_policy:3,disablekb:1,playsinline:1,fs:0},
     events:{onReady:function(){ytReady=true;yt.mute();if(/[?&]hl=1/.test(location.search))startHL()},
             onStateChange:function(e){if(e.data===0&&hlOn&&clipLive())nextClip();if(e.data===1){try{yt.unloadModule('captions');yt.unloadModule('cc')}catch(x){}}},
-            onError:function(){if(hlOn&&Date.now()-clipAt>1500)nextClip()}}});
+            onError:function(){if(hlOn)nextClip()}}});
 };
 function anims(){return document.getAnimations().filter(function(a){return a.effect&&a.effect.target&&!a.effect.target.closest('#hl')&&!a.effect.target.closest('.sponsors')})}
 function showClip(){var c=CLIPS[hlIdx];
