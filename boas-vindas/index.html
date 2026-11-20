@@ -220,6 +220,23 @@ document.addEventListener('keydown',function(e){if(e.key==='f'||e.key==='F')togg
 ['mousemove','touchstart'].forEach(function(ev){document.addEventListener(ev,wake,{passive:true})});
 document.addEventListener('fullscreenchange',function(){lbl.textContent=isFs()?'Sair da tela cheia':'Tela cheia';wake();setTimeout(fit,100)});
 wake();
+// atualização automática: a cada 1 min confere se a página mudou no GitHub e troca o conteúdo sem recarregar (não sai da tela cheia)
+var sig=null;
+async function checkUpdate(){try{
+  var r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;
+  var html=await r.text();var n=html.length+':'+html.slice(-300);
+  if(sig===null){sig=n;return}
+  if(n===sig)return;sig=n;
+  var doc=new DOMParser().parseFromString(html,'text/html');
+  var ns=doc.querySelector('style'),nst=doc.getElementById('stage');
+  if(ns)document.querySelector('style').textContent=ns.textContent;
+  if(nst)document.getElementById('stage').innerHTML=nst.innerHTML;
+  fit();
+}catch(e){}}
+checkUpdate();setInterval(checkUpdate,60e3);
+// mantém a tela do computador acordada
+async function keepAwake(){try{await navigator.wakeLock.request('screen')}catch(e){}}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)keepAwake()});keepAwake();
 </script>
 </body>
 </html>
