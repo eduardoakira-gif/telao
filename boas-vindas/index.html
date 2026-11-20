@@ -130,6 +130,22 @@ html,body{height:100%;margin:0;background:var(--black);color:var(--white);overfl
 #fsbtn svg{width:20px;height:20px}
 #fsbtn.hide{opacity:0;pointer-events:none}
 body.idle{cursor:none}
+/* highlights (vídeos do YouTube, sem som, poucos segundos de cada) */
+#hl{position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;transition:opacity .6s;background:var(--black)}
+#hl.on{opacity:1}
+#hl .shards{opacity:.9}
+#hl .kick{position:absolute;left:80px;top:190px}
+#hl .ttl{position:absolute;left:80px;top:222px;font:400 96px/1 var(--f-display);text-transform:uppercase}
+#hl .ttl .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#hl .vid{position:absolute;right:80px;top:180px;width:1100px;height:619px;background:#000}
+#hl .vid:before{content:"";position:absolute;inset:-8px;background:var(--grad);z-index:-1}
+#hl .vid iframe,#hl .vid #ytp{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+#hl .who{position:absolute;left:80px;top:420px;width:560px}
+#hl .who .nm{font:400 120px/1 var(--f-display);text-transform:lowercase;transition:opacity .3s}
+#hl .who .ctx{margin-top:22px;font:800 24px/1.35 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+#hl .dots{position:absolute;left:80px;top:800px;display:flex;gap:12px}
+#hl .dots i{width:46px;height:8px;background:var(--line)}
+#hl .dots i.on{background:var(--grad)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:0s!important}}
 </style>
 </head>
@@ -187,6 +203,15 @@ body.idle{cursor:none}
     </div>
   </section>
 
+  <section id="hl" aria-hidden="true">
+    <div class="shards"></div>
+    <div class="kick kicker">Valorant · Fluxo W7M</div>
+    <div class="ttl">Melhores <span class="g">jogadas</span></div>
+    <div class="who"><div class="nm" id="hl-nm"></div><div class="ctx" id="hl-ctx"></div></div>
+    <div class="dots" id="hl-dots"></div>
+    <div class="vid"><div id="ytp"></div></div>
+  </section>
+
   <div class="sponsors">
     <div class="lbl">Patrocinadores</div>
     <div class="row">
@@ -231,12 +256,45 @@ async function checkUpdate(){try{
   var ns=doc.querySelector('style'),nst=doc.getElementById('stage');
   if(ns)document.querySelector('style').textContent=ns.textContent;
   if(nst)document.getElementById('stage').innerHTML=nst.innerHTML;
+  if(window.YT&&YT.Player){hlOn=false;ytReady=false;clearTimeout(hlTimer);onYouTubeIframeAPIReady()}
   fit();
 }catch(e){}}
 checkUpdate();setInterval(checkUpdate,60e3);
 // mantém a tela do computador acordada
 async function keepAwake(){try{await navigator.wakeLock.request('screen')}catch(e){}}
 document.addEventListener('visibilitychange',function(){if(!document.hidden)keepAwake()});keepAwake();
+// ===== highlights: depois das 3 cenas, pausa o loop e toca alguns segundos de cada jogador (YouTube, sem som) =====
+var CLIPS=[
+  {nm:'palla', id:'I1xQ12HeXG0', s:18, e:28, ctx:'Ace vs KRÜ · VCT 2026'},
+  {nm:'tuyz',  id:'SXDu6hA4u1U', s:12, e:22, ctx:'Clutch 1v3 · Champions 2023'},
+  {nm:'mazin', id:'WVN0NSsyd8U', s:20, e:30, ctx:'Clutch 2v5 · VCT Americas 2024'},
+  {nm:'qck',   id:'wfi5SRdu9jc', s:8,  e:18, ctx:'Highlights'},
+  {nm:'jzz',   id:'rsTYud4h4GE', s:14, e:24, ctx:'VCT Americas'}
+];
+var yt=null,ytReady=false,hlOn=false,hlIdx=0,hlTimer=null;
+(function(){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';t.onerror=function(){ytReady=false};document.head.appendChild(t)})();
+window.onYouTubeIframeAPIReady=function(){
+  yt=new YT.Player('ytp',{host:'https://www.youtube-nocookie.com',playerVars:{autoplay:1,mute:1,controls:0,rel:0,modestbranding:1,iv_load_policy:3,disablekb:1,playsinline:1,fs:0},
+    events:{onReady:function(){ytReady=true;yt.mute();if(/[?&]hl=1/.test(location.search))startHL()},
+            onStateChange:function(e){if(e.data===0&&hlOn)nextClip()},
+            onError:function(){if(hlOn)nextClip()}}});
+};
+function anims(){return document.getAnimations().filter(function(a){return a.effect&&a.effect.target&&!a.effect.target.closest('#hl')&&!a.effect.target.closest('.sponsors')})}
+function showClip(){var c=CLIPS[hlIdx];
+  document.getElementById('hl-nm').textContent=c.nm;document.getElementById('hl-ctx').textContent=c.ctx;
+  document.getElementById('hl-dots').innerHTML=CLIPS.map(function(_,i){return '<i class="'+(i===hlIdx?'on':'')+'"></i>'}).join('');
+  try{yt.loadVideoById({videoId:c.id,startSeconds:c.s,endSeconds:c.e});yt.mute()}catch(e){}
+  clearTimeout(hlTimer);hlTimer=setTimeout(nextClip,(c.e-c.s+4)*1000); // segurança se o vídeo travar
+}
+function nextClip(){clearTimeout(hlTimer);hlIdx++;if(hlIdx>=CLIPS.length)return endHL();showClip()}
+function startHL(){if(hlOn||!ytReady)return;hlOn=true;hlIdx=0;anims().forEach(function(a){a.pause()});
+  document.getElementById('hl').classList.add('on');showClip()}
+function endHL(){hlOn=false;clearTimeout(hlTimer);try{yt.stopVideo()}catch(e){}
+  document.getElementById('hl').classList.remove('on');
+  anims().forEach(function(a){a.currentTime=0;a.play()})}
+// detecta o fim do ciclo das 3 cenas pela barra de progresso
+setInterval(function(){if(hlOn||!ytReady)return;var p=document.querySelector('.prog');if(!p)return;
+  var a=p.getAnimations()[0];if(!a)return;var t=a.currentTime%30000;if(t>29400)startHL()},150);
 </script>
 </body>
 </html>
