@@ -226,7 +226,7 @@ body.idle{cursor:none}
   </div>
 </div></div>
 <button id="fsbtn" type="button" aria-label="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Tela cheia</span></button>
-<div id="musw" style="position:fixed;left:-600px;top:0;width:240px;height:240px;overflow:hidden;opacity:0;pointer-events:none"><div id="mus"></div></div>
+<div id="musw" style="position:fixed;right:0;bottom:0;width:240px;height:240px;overflow:hidden;opacity:.01;z-index:-1;pointer-events:none"><div id="mus"></div></div>
 <script>
 // encaixa o palco 1920x1080 em qualquer tela
 function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);document.getElementById('stage').style.transform='translate(-50%,-50%) scale('+s+')'}
