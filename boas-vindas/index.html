@@ -133,6 +133,7 @@ body.idle{cursor:none}
 /* highlights (vídeos do YouTube, sem som, poucos segundos de cada) */
 #hl{position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;transition:opacity 1s ease;background:var(--black)}
 #hl.on{opacity:1}
+#hl:not(.on) .vid{opacity:0;transition:opacity .25s}
 #hl .shards{opacity:.9}
 #hl .pcard{position:absolute;left:80px;top:180px;width:520px;height:760px;overflow:hidden;background:var(--shard);clip-path:polygon(0 0,100% 0,100% 94%,90% 100%,0 100%)}
 #hl .pcard .ph{position:absolute;inset:0;background-size:cover;background-position:center 18%}
