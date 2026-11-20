@@ -94,9 +94,16 @@ html,body{height:100%;margin:0;background:var(--black);color:var(--white);overfl
 
 /* cena 3: o que rola hoje */
 .s3 .wrap{position:absolute;left:80px;right:80px;top:200px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.s3 h2{font:400 120px/.92 var(--f-display);margin:0;text-transform:uppercase}
+.s3 h2{font:400 104px/.95 var(--f-display);margin:0;text-transform:uppercase}
 .s3 h2 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .s3 .brush{font:400 50px/1.1 var(--f-brush);margin-top:30px;transform:rotate(-2deg);display:inline-block}
+.s3 .meta{display:flex;gap:0;margin-top:44px;border:2px solid var(--line);background:rgba(17,16,20,.8);width:max-content}
+.s3 .meta div{padding:22px 34px;border-left:2px solid var(--line)}
+.s3 .meta div:first-child{border-left:0}
+.s3 .meta b{display:block;font:400 56px/1 var(--f-display);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s3 .meta div:last-child b{font-size:40px;line-height:56px;text-transform:uppercase}
+.s3 h2 .vsx{display:block;font-size:60px;line-height:1.1;margin:6px 0 4px}
+.s3 .meta span{display:block;margin-top:8px;font:800 20px/1 var(--f-ui);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
 .list{display:flex;flex-direction:column;gap:22px}
 .item{display:flex;align-items:center;gap:28px;padding:28px 34px;border:2px solid var(--line);background:rgba(17,16,20,.8);opacity:0;animation:var(--loop) cubic-bezier(.2,.8,.2,1) infinite}
 .item .n{font:400 64px/1 var(--f-display);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;min-width:90px}
@@ -118,6 +125,11 @@ html,body{height:100%;margin:0;background:var(--black);color:var(--white);overfl
 .sponsors:before{content:"";position:absolute;left:0;right:0;top:20px;height:2px;background:var(--grad);opacity:.6}
 .prog{position:absolute;left:0;top:0;height:6px;background:var(--grad);z-index:7;animation:var(--loop) linear infinite prog}
 @keyframes prog{from{width:0}to{width:100%}}
+#fsbtn{position:fixed;right:24px;top:24px;z-index:50;display:flex;align-items:center;gap:10px;padding:14px 20px;border:0;border-radius:999px;background:var(--grad);color:#fff;font:800 16px/1 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 30px rgba(164,44,255,.45);transition:opacity .4s,transform .2s}
+#fsbtn:hover{transform:scale(1.05)}
+#fsbtn svg{width:20px;height:20px}
+#fsbtn.hide{opacity:0;pointer-events:none}
+body.idle{cursor:none}
 @media (prefers-reduced-motion:reduce){*{animation-duration:0s!important}}
 </style>
 </head>
@@ -163,9 +175,9 @@ html,body{height:100%;margin:0;background:var(--black);color:var(--white);overfl
   <section class="scene s3">
     <div class="wrap">
       <div>
-        <div class="kicker">Hoje na Casa Fluxo</div>
-        <h2 style="margin-top:24px">Faz <span class="g">barulho</span> que eles escutam</h2>
-        <div class="brush">#SegueOFluxo</div>
+        <div class="kicker">Nossa partida hoje</div>
+        <h2 style="margin-top:24px">Fluxo W7M<span class="vsx g">x</span>O Intelecto</h2>
+        <div class="meta"><div><b>17H</b><span>Início</span></div><div><b>MD3</b><span>Melhor de 3</span></div><div><b>Fase Suíça</b><span>Kickoff</span></div></div>
       </div>
       <div class="list">
         <div class="item"><div class="n">01</div><div class="t">X1 de Valorant<small>Desafie a torcida nos intervalos</small></div></div>
@@ -189,10 +201,25 @@ html,body{height:100%;margin:0;background:var(--black);color:var(--white);overfl
     </div>
   </div>
 </div></div>
+<button id="fsbtn" type="button" aria-label="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Tela cheia</span></button>
 <script>
 // encaixa o palco 1920x1080 em qualquer tela
 function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);document.getElementById('stage').style.transform='translate(-50%,-50%) scale('+s+')'}
 addEventListener('resize',fit);fit();
+// botão de tela cheia: some sozinho quando o mouse fica parado e quando já está em tela cheia
+var btn=document.getElementById('fsbtn'),lbl=btn.querySelector('span'),t;
+function isFs(){return !!(document.fullscreenElement||document.webkitFullscreenElement)}
+function toggleFs(){var d=document.documentElement;
+  if(isFs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}
+  else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d)}}
+function wake(){btn.classList.remove('hide');document.body.classList.remove('idle');clearTimeout(t);
+  t=setTimeout(function(){btn.classList.add('hide');document.body.classList.add('idle')},isFs()?2000:6000)}
+btn.addEventListener('click',function(e){e.stopPropagation();toggleFs()});
+document.addEventListener('dblclick',toggleFs);
+document.addEventListener('keydown',function(e){if(e.key==='f'||e.key==='F')toggleFs()});
+['mousemove','touchstart'].forEach(function(ev){document.addEventListener(ev,wake,{passive:true})});
+document.addEventListener('fullscreenchange',function(){lbl.textContent=isFs()?'Sair da tela cheia':'Tela cheia';wake();setTimeout(fit,100)});
+wake();
 </script>
 </body>
 </html>
