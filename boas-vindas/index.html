@@ -252,12 +252,15 @@ async function checkUpdate(){try{
   var r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;
   var html=await r.text();var n=html.length+':'+html.slice(-300);
   if(sig===null){sig=n;return}
-  if(n===sig)return;sig=n;
+  if(n===sig)return;if(hlOn)return; // não atualiza no meio dos highlights; tenta de novo no próximo minuto
+  sig=n;var keepT=0;try{keepT=document.querySelector('.prog').getAnimations()[0].currentTime}catch(e){}
   var doc=new DOMParser().parseFromString(html,'text/html');
   var ns=doc.querySelector('style'),nst=doc.getElementById('stage');
   if(ns)document.querySelector('style').textContent=ns.textContent;
   if(nst)document.getElementById('stage').innerHTML=nst.innerHTML;
   if(window.YT&&YT.Player){hlOn=false;ytReady=false;clearTimeout(hlTimer);onYouTubeIframeAPIReady()}
+  // mantém a cena onde estava (não volta para a tela de boas-vindas no meio do ciclo)
+  requestAnimationFrame(function(){anims().forEach(function(a){try{a.currentTime=keepT}catch(e){}})});
   fit();
 }catch(e){}}
 checkUpdate();setInterval(checkUpdate,60e3);
