@@ -143,8 +143,9 @@ body.idle{cursor:none}
 #hl .pcard.in .ph{animation:pkb 14s linear both}
 @keyframes pin{from{opacity:0;transform:translateX(-120px)}to{opacity:1;transform:none}}
 @keyframes pkb{from{transform:scale(1.12)}to{transform:scale(1.02)}}
-#hl .vid,#hl .vidframe{top:220px}
-#hl .vidframe{top:212px}
+#hl .vidframe{position:absolute;left:652px;top:220px;width:1196px;height:680px;background:var(--grad);clip-path:polygon(0 0,100% 0,100% 100%,3% 100%,0 94%)}
+#hl .vid{position:absolute;left:660px;top:228px;width:1180px;height:664px;overflow:hidden;background:#000;clip-path:polygon(0 0,100% 0,100% 100%,3% 100%,0 94%)}
+#hl .vid iframe,#hl #ytp{position:absolute;left:0;top:-90px;width:100%;height:calc(100% + 180px);border:0;pointer-events:none}
 #hl .vid.in,#hl .vidframe.in{animation:vin .7s .15s cubic-bezier(.2,.8,.2,1) both}
 @keyframes vin{from{opacity:0;transform:translateX(120px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:0s!important}}
