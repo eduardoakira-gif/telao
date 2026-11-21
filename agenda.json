@@ -1,6 +1,6 @@
 {
   "source": "COMPETITIVO FLUXO W7M",
-  "updated": "2026-11-20T15:43:11-03:00",
+  "updated": "2026-11-20T21:15:26-03:00",
   "events": [
     {
       "id": "svb8j41eqsbuvafupuuda3sc98@google.com-2026-11-20T17:00:00-03:00",
@@ -42,6 +42,13 @@
       "title": "[KL] vs Dendele",
       "start": "2026-11-23T20:00:00-03:00",
       "end": "2026-11-23T21:00:00-03:00",
+      "live": ""
+    },
+    {
+      "id": "h8l0tot7ag8kpe4bqhu5hsh1sc@google.com-2026-11-28T07:00:00-03:00",
+      "title": "FFWS GRANDE FINAL",
+      "start": "2026-11-28T07:00:00-03:00",
+      "end": "2026-11-28T13:00:00-03:00",
       "live": ""
     },
     {
