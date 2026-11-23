@@ -148,10 +148,11 @@ function build(){
     const s=new Date(e.start);const en=e.end?new Date(e.end):new Date(s.getTime()+3*3600e3);return{...p,id:e.id||e.start+e.title,t:s,end:en}})
     .filter(g=>!isNaN(g.t)).sort((a,b)=>a.t-b.t);
 }
+let dataSig="";
 async function sync(){
   try{const r=await fetch("../overrides.json?t="+Date.now(),{cache:"no-store"});if(r.ok)OVR=await r.json()}catch(e){}
   try{const r=await fetch("../agenda.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j.events))events=j.events}}catch(e){}
-  games=build();nKey=qKey="";render();
+  {const sg=JSON.stringify([events,OVR]);if(sg!==dataSig){dataSig=sg;games=build();nKey=qKey="";render();}}
 }
 
 const $=id=>document.getElementById(id);
@@ -203,7 +204,7 @@ function nextScene(){
 }
 setTimeout(nextScene,ORDER[0][1]);
 
-render();setInterval(render,250);sync();setInterval(sync,5*60e3);document.fonts&&document.fonts.ready.then(fitLine);
+render();setInterval(render,250);sync();setInterval(sync,60e3);document.fonts&&document.fonts.ready.then(fitLine);
 
 // Recarrega sozinho quando uma nova versão for publicada
 let sig=null;

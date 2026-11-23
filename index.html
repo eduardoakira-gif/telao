@@ -226,11 +226,12 @@ function build(){
   return events.map(e0=>{const k=Object.keys(OVR).find(k=>String(e0.id||"").startsWith(k));const e=k?{...e0,...OVR[k]}:e0;const p=parse(e.title);const s=new Date(e.start);const en=e.end?new Date(e.end):new Date(s.getTime()+3*3600e3);
     return{...p,id:e.id||e.start+e.title,t:s,end:en,live:e.live||LIVE[p.mod]||""}}).filter(g=>!isNaN(g.t)).sort((a,b)=>a.t-b.t);
 }
+let dataSig="";
 async function sync(){
   try{const r=await fetch("overrides.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&typeof j==="object")OVR=j}}catch(e){}
   try{const r=await fetch("live.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&typeof j==="object")LIVE={...LIVE,...j}}}catch(e){}
   try{const r=await fetch("agenda.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j.events)&&j.events.length)events=j.events}}catch(e){}
-  games=build();currentKey=listKey="";
+  {const sg=JSON.stringify([events,OVR,LIVE]);if(sg!==dataSig){dataSig=sg;games=build();currentKey=listKey="";}}
 }
 
 const $=id=>document.getElementById(id);
@@ -302,7 +303,7 @@ function render(){
 let sgI=0;setInterval(()=>{const g=document.querySelectorAll(".sg");if(!g.length)return;g[sgI%g.length].classList.remove("on");sgI++;g[sgI%g.length].classList.add("on")},6000);
 let hl=0;setInterval(()=>{const it=[...document.querySelectorAll(".item")];if(!it.length)return;it.forEach(e=>e.classList.remove("hl"));it[hl%it.length].classList.add("hl");hl++},3500);
 render();setInterval(render,250);document.fonts&&document.fonts.ready.then(fitOpp);
-sync();setInterval(sync,5*60e3);
+sync();setInterval(sync,60e3);
 // Recarrega sozinho quando uma nova versão do painel é publicada
 let pageSig=null;
 async function checkVersion(){try{const r=await fetch(location.pathname+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)return;const t=await r.text();const sig=t.length+":"+t.slice(-200);if(pageSig===null)pageSig=sig;else if(sig!==pageSig)location.reload()}catch(e){}}
